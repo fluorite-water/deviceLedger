@@ -4,7 +4,4 @@
 	<select id="findUserList" resultType="com.wlt.deviceledger.bean.user.UserBean">
 		select userId,username,age from users
 	</select>
-	<select id="findUserList2" resultType="com.wlt.deviceledger.bean.user.UserBean">
-		select userId,username,age from users
-	</select>
 </mapper>
