@@ -42,14 +42,5 @@ public class DemoController {
 		List<UserBaseMapperDempBean> list = userService.baseMapperDemo();
 		return list;
 	}
-	@RequestMapping("/baseMapperDemo2")
-	@ResponseBody
-	public List<UserBaseMapperDempBean> baseMapperDemo2() {
-		log.debug("debug---执行完成------");
-		log.info("info----执行完成-----------------");
-		
-		List<UserBaseMapperDempBean> list = userService.baseMapperDemo();
-		return list;
-	}
 }
  
