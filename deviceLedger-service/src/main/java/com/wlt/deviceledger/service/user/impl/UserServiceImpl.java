@@ -3,7 +3,9 @@ package com.wlt.deviceledger.service.user.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wlt.deviceledger.bean.user.UserBaseMapperDempBean;
@@ -24,6 +26,7 @@ public class UserServiceImpl implements IUserService{
 	@Autowired
 	private IUserDao userDao;
 	@Override
+//	@Async
 	public List<UserBean> findUserList() {
 //		QueryWrapper<UserBean> emptryWrapper = new QueryWrapper<UserBean>();
 //		emptryWrapper.setEntity(new UserBean());
@@ -31,9 +34,27 @@ public class UserServiceImpl implements IUserService{
 		return userDao.findUserList();
 	}
 	@Override
+	@Async
 	public List<UserBaseMapperDempBean> baseMapperDemo() {
 		QueryWrapper<UserBaseMapperDempBean> queryWrapper = new QueryWrapper();
 		return userDao.selectList(queryWrapper);
+	}
+	@Override
+	@Async
+	public void testAsync1(String string) {
+		System.out.println(string);
+		System.out.println("---------------------------");
+	}
+	@Override
+	@Async
+	public void testAsync2(String string) {
+		System.out.println(string);
+		System.out.println("**************************");
+	}
+	@Override
+	@Transactional
+	public void add(UserBaseMapperDempBean bean) {
+		userDao.insert(bean);
 	}
 
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wlt.deviceledger.bean.user.UserBaseMapperDempBean;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.user.IUserService;
+import com.wlt.deviceledger.util.common.PropertiesLoader;
 
 
 /** 
@@ -28,9 +29,13 @@ public class DemoController {
 	private IUserService userService;
 	@RequestMapping("/demo")
 	@ResponseBody
+//	@Scheduled(cron = "0/5 * * * * ?")   //定时器测试
 	public List<UserBean> demo() {
 		List<UserBean> list = userService.findUserList();
 		log.error("执行完成--error---------------------");
+		log.error("执行完成--error---------------------");
+		System.out.println("async----------1");
+		System.out.println("async----------2");
 		return list;
 	}
 	@RequestMapping("/baseMapperDemo")
@@ -41,6 +46,61 @@ public class DemoController {
 		
 		List<UserBaseMapperDempBean> list = userService.baseMapperDemo();
 		return list;
+	}
+	
+	/**
+	 * 异步执行测试：请将 异步@Async 注解打在实现类的方法上，切不可打在接口的方法上
+	 * @return
+	 */
+	@RequestMapping("testAsync")
+	@ResponseBody
+	public String testAsync() {
+//		for (int i = 0; i < 100000; i++) {
+//			System.out.println(i);
+//			userService.testAsync1("a");
+//		}
+		userService.testAsync1("a");
+		userService.testAsync1("a");
+		userService.testAsync1("a");
+		userService.testAsync1("a");
+		userService.testAsync1("a");
+		userService.testAsync2("b");
+		userService.testAsync2("b");
+		userService.testAsync2("b");
+		userService.testAsync2("b");
+		userService.testAsync2("b");
+		userService.testAsync2("b");
+		System.out.println("111111111111111111111");
+		System.out.println("222222222222222222222");
+		log.info("info --------------------");
+		return "success";
+		
+	}
+	
+	/**
+	 * 事务测试方法
+	 */
+	@RequestMapping("testTx")
+	@ResponseBody
+	public String testTx() {
+		UserBaseMapperDempBean bean = new UserBaseMapperDempBean();
+		bean.setAge("100");
+		bean.setUserId("qqqqqqq");
+		bean.setUsername("事务测试");
+		userService.add(bean);
+		int i=10/0;
+		return "success";
+	}
+	
+	/**
+	 * 读取 properties文件
+	 */
+	@RequestMapping("testProperties")
+	@ResponseBody
+	public String ReadPropertiesTest() {
+		String property = new PropertiesLoader("applicationContext.properties").getProperty("textStr");
+		System.out.println(property);
+		return property;
 	}
 }
  

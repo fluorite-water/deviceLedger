@@ -18,5 +18,11 @@ public interface IUserService {
 
 	List<UserBaseMapperDempBean> baseMapperDemo();
 
+	void testAsync1(String string);
+
+	void testAsync2(String string);
+
+	void add(UserBaseMapperDempBean bean);
+
 }
  

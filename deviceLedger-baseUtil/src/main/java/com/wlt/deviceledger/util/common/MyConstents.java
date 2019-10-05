@@ -6,9 +6,9 @@ package com.wlt.deviceledger.util.common;
 * @version 版本：1.0
 * @since JDK 1.8.0_181
 */
-public class StaticContent {
+public class MyConstents {
 
-	private static final String success = "200"; 
-	private static final String error = "10000"; 
+	private static final String SUCCESS = "200"; 
+	private static final String ERROR = "10000"; 
 }
  
