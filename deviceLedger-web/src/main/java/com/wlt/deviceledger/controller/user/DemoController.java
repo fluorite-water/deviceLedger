@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wlt.deviceledger.bean.user.UserBaseMapperDempBean;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.user.IUserService;
+import com.wlt.deviceledger.util.base.ResultData;
 import com.wlt.deviceledger.util.common.PropertiesLoader;
 
 
@@ -30,13 +31,19 @@ public class DemoController {
 	@RequestMapping("/demo")
 	@ResponseBody
 //	@Scheduled(cron = "0/5 * * * * ?")   //定时器测试
-	public List<UserBean> demo() {
+	public ResultData demo() {
+		// 返回结果集
+		ResultData resultData =new ResultData();
+		resultData.setCode("200");
+		resultData.setMsg("请求成功");
+		resultData.setSuccess(true);
 		List<UserBean> list = userService.findUserList();
+		resultData.setObj(list);
 		log.error("执行完成--error---------------------");
 		log.error("执行完成--error---------------------");
 		System.out.println("async----------1");
 		System.out.println("async----------2");
-		return list;
+		return resultData;
 	}
 	@RequestMapping("/baseMapperDemo")
 	@ResponseBody

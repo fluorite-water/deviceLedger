@@ -8,7 +8,7 @@ package com.wlt.deviceledger.util.common;
 */
 public class MyConstents {
 
-	private static final String SUCCESS = "200"; 
-	private static final String ERROR = "10000"; 
+	public static final String SUCCESS = "200"; 
+	public static final String ERROR = "10000"; 
 }
  

@@ -96,5 +96,13 @@
 <!--     <context:annotation-config /> -->
 
  <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->  
-    
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="basePackage" value="com.wlt.deviceledger.dao" />
+	    <property name="properties">
+	        <value>
+	            mappers=tk.mybatis.mapper.common.Mapper,tk.mybatis.mapper.common.special.InsertListMapper
+	        </value>
+	    </property>
+	    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
 </beans>
