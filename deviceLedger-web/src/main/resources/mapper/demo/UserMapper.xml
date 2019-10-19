@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wlt.deviceledger.dao.user.IUserDao">
-	<select id="findUserList" resultType="com.wlt.deviceledger.bean.user.UserBean">
-		select userId,username,age from users
+
+	<resultMap id="BaseResult" type="com.wlt.deviceledger.bean.user.UserBean">
+		<id column="id" property="id" />
+		<result column="user_name" property="userName" />
+		<result column="login_act" property="loginAct" />
+		<result column="login_pwd" property="loginPwd" />
+		<collection property="roleList" javaType="com.wlt.deviceledger.bean.auth.Role">
+			<id column="id" property="id" />
+			<result column="dept_code" property="deptCode" />
+			<result column="role" property="role" />
+		</collection>
+	</resultMap>
+
+	<select id="selectUserOfRole" resultMap="BaseResult">
+
+		select *
+		from tbl_user u
+		left join tbl_user_role ur
+		on ur.user_id=u.id
+		and u.is_delete=0
+		and u.state=0
+
 	</select>
+
 </mapper>

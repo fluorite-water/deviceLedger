@@ -43,8 +43,9 @@
 		    <artifactId>mybatis-plus-generator</artifactId>
 		    <version>3.0.7</version>
 		</dependency>
-		
-        <dependency>
+
+
+	  <dependency>
 			<groupId>com.wlt</groupId>
 			<artifactId>deviceLedger-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

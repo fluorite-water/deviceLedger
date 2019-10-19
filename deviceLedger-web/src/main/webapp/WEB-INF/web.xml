@@ -4,7 +4,9 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
-  <!-- 以下3项参数与log4j的配置相关 -->  
+  <!-- 以下3项参数与log4j的配置相关 -->
+
+
 
     <context-param>  
         <param-name>log4jConfigLocation</param-name>  
@@ -24,7 +26,9 @@
  <!-- 配置tomcat加载的spring配置文件的路径 -->
    	<context-param> 
 	   <param-name>contextConfigLocation </param-name> 
-	   <param-value>classpath:spring-mvc.xml;classpath:applicationContext.xml</param-value> 
+	   <param-value>classpath:spring-mvc.xml;
+           classpath:applicationContext.xml;
+           classpath:spring-shiro-web.xml</param-value>
 	</context-param> 
 <!-- Spring监听器 -->  
     <listener>  
@@ -44,7 +48,18 @@
 		<filter-name>header</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
+    <!--shiro拦截器-->
+    <filter>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- SpringMVC -->
     <servlet>
         <servlet-name>spring</servlet-name>

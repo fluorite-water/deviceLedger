@@ -45,7 +45,7 @@ public class DemoController {
 		System.out.println("async----------2");
 		return resultData;
 	}
-	@RequestMapping("/baseMapperDemo")
+	/*@RequestMapping("/baseMapperDemo")
 	@ResponseBody
 	public List<UserBaseMapperDempBean> baseMapperDemo() {
 		log.debug("debug---执行完成------");
@@ -54,11 +54,10 @@ public class DemoController {
 		List<UserBaseMapperDempBean> list = userService.baseMapperDemo();
 		return list;
 	}
-	
+	*/
 	/**
 	 * 异步执行测试：请将 异步@Async 注解打在实现类的方法上，切不可打在接口的方法上
-	 * @return
-	 */
+	 * @return*/
 	@RequestMapping("testAsync")
 	@ResponseBody
 	public String testAsync() {
@@ -66,17 +65,17 @@ public class DemoController {
 //			System.out.println(i);
 //			userService.testAsync1("a");
 //		}
+		/*userService.testAsync1("a");
 		userService.testAsync1("a");
 		userService.testAsync1("a");
 		userService.testAsync1("a");
 		userService.testAsync1("a");
-		userService.testAsync1("a");
 		userService.testAsync2("b");
 		userService.testAsync2("b");
 		userService.testAsync2("b");
 		userService.testAsync2("b");
 		userService.testAsync2("b");
-		userService.testAsync2("b");
+		userService.testAsync2("b");*/
 		System.out.println("111111111111111111111");
 		System.out.println("222222222222222222222");
 		log.info("info --------------------");
@@ -94,7 +93,7 @@ public class DemoController {
 		bean.setAge("100");
 		bean.setUserId("qqqqqqq");
 		bean.setUsername("事务测试");
-		userService.add(bean);
+		//userService.add(bean);
 		int i=10/0;
 		return "success";
 	}

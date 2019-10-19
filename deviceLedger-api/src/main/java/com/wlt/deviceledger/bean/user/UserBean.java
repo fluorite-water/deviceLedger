@@ -1,8 +1,13 @@
 package com.wlt.deviceledger.bean.user;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.wlt.deviceledger.bean.auth.Role;
+import lombok.Data;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -11,33 +16,35 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 * @version 版本：1.0
 * @since JDK 1.8.0_181
 */
-public class UserBean extends Model<UserBean> {
+
+@Data
+@TableName("tbl_user")
+public class UserBean {
 
 	/**
 	 * 序列化
 	 */
 	private static final long serialVersionUID = 396085214682707224L;
+	private String id;
 	private String userId;
-	private String username;
+	private String userName;
 	private String age;
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getAge() {
-		return age;
-	}
-	public void setAge(String age) {
-		this.age = age;
-	}
+	private String loginAct;
+	private String loginPwd;
+	private String salt;
+	private Integer state;
+	private Integer isDelete;
+	private String createTime;
+	private String email;
+
+	@TableField(exist = false)
+	private String kaptcha;
+
+	@TableField(exist = false)
+	private String token;
+
+	@TableField(exist = false)
+	private List<Role> roleList;
 
 }
  

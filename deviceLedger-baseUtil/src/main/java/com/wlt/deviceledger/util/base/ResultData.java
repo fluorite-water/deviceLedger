@@ -10,7 +10,7 @@ import java.io.Serializable;
 * @version 版本：1.0
 * @since JDK 1.8.0_181
 */
-public class ResultData implements Serializable{
+public class ResultData<T> implements Serializable{
 
 	/**
 	 * 序列化
@@ -31,7 +31,7 @@ public class ResultData implements Serializable{
 	/**
 	 * 返回主要数据结果集
 	 */
-	private Object obj;
+	private T obj;
 	
 	public String getCode() {
 		return code;
@@ -51,10 +51,10 @@ public class ResultData implements Serializable{
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-	public Object getObj() {
+	public T getObj() {
 		return obj;
 	}
-	public void setObj(Object obj) {
+	public void setObj(T obj) {
 		this.obj = obj;
 	}
 
