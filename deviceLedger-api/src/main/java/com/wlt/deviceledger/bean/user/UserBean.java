@@ -26,7 +26,6 @@ public class UserBean {
 	 */
 	private static final long serialVersionUID = 396085214682707224L;
 	private String id;
-	private String userId;
 	private String userName;
 	private String age;
 	private String loginAct;

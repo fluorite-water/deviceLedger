@@ -10,10 +10,8 @@ import com.wlt.deviceledger.util.exception.user.UserException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -30,7 +28,7 @@ import java.util.Map;
  * @Date: 2019/10/13 15:09
  * @Author: 杨开怀
  */
-@RestController
+@Controller
 @RequestMapping("/user")
 public class UserController {
 
@@ -47,6 +45,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
+    @ResponseBody
     public ResultData<Map<String, Object>> login(@RequestBody UserBean userBean, HttpServletRequest request) {
 
         Map<String, Object> resultMap = null;
@@ -104,6 +103,7 @@ public class UserController {
 
 
     @PostMapping("/token")
+    @ResponseBody
     public ResultData<Map<String, Object>> getToken(@RequestBody UserBean userBean) {
 
         Map<String, Object> resultMap = null;
@@ -138,6 +138,7 @@ public class UserController {
 
 
     @PostMapping("/regis")
+    @ResponseBody
     public ResultData<Map<String, Object>> regis(@RequestBody UserBean userBean) {
 
 
@@ -181,6 +182,7 @@ public class UserController {
 
         Cookie cookie = new Cookie("kaptcha", code);
         response.addCookie(cookie);
+        response.setContentType("image/jpeg");
 
         VerifyCodeUtils.outputVerifyImage(100, 30, outputStream, code);
 
