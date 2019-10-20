@@ -1,24 +1,25 @@
 package com.wlt.deviceledger.settings.shrio;
 
-import com.auth0.jwt.JWT;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 import com.wlt.deviceledger.bean.auth.Permission;
-import com.wlt.deviceledger.bean.auth.Role;
-import com.wlt.deviceledger.bean.user.UserBean;
-import com.wlt.deviceledger.service.auth.IRoleService;
-import com.wlt.deviceledger.service.user.IUserService;
-import com.wlt.deviceledger.util.base.ConstantUtils;
-import com.wlt.deviceledger.util.common.JWTUtil;
-import com.wlt.deviceledger.util.config.UserToken;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.wlt.deviceledger.bean.user.UserBean;
+import com.wlt.deviceledger.service.auth.IRoleService;
+import com.wlt.deviceledger.service.user.IUserService;
+import com.wlt.deviceledger.util.base.ConstantUtils;
+import com.wlt.deviceledger.util.common.JWTUtil;
+import com.wlt.deviceledger.util.config.UserToken;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class DatabaseRealm extends AuthorizingRealm {
 
@@ -36,19 +37,25 @@ public class DatabaseRealm extends AuthorizingRealm {
 
 		// 此处最好使用缓存提升速度
 		UserBean userBean = userService.getUserByLoginAct(username);
-		userBean = userService.getUserOfRole(userBean.getId());
-		if (userBean == null || userBean.getRoleList().isEmpty()) {
-			return authorizationInfo;
-		}
-		for (Role role : userBean.getRoleList()) {
-			authorizationInfo.addRole(role.getRole());
-			role = roleService.getRoleOfPerm(role.getId());
-			if (role == null || role.getPermissions().isEmpty()) {
-				continue;
-			}
-			for (Permission p : role.getPermissions()) {
-				authorizationInfo.addStringPermission(p.getPermission());
-			}
+//		userBean = userService.getUserOfRole(userBean.getId());
+		List<Permission> perList = userService.getPerOfUserId(userBean.getId());
+		
+//		if (userBean == null || userBean.getRoleList().isEmpty()) {
+//			return authorizationInfo;
+//		}
+//		for (Role role : userBean.getRoleList()) {
+//			authorizationInfo.addRole(role.getRole());
+//			role = roleService.getRoleOfPerm(role.getId());
+//			if (role == null || role.getPermissions().isEmpty()) {
+//				continue;
+//			}
+//			for (Permission p : role.getPermissions()) {
+//				authorizationInfo.addStringPermission(p.getPermission());
+//			}
+//		}
+//		authorizationInfo.addObjectPermissions(perList);
+		for (Permission p : perList) {
+			authorizationInfo.addStringPermission(p.getPerUrl());
 		}
 		return authorizationInfo;
 	}

@@ -23,8 +23,6 @@ import java.util.Map;
 
 /**
  * ClassName: UserController
- * Describe: TODO
- *
  * @Date: 2019/10/13 15:09
  * @Author: 杨开怀
  */
@@ -44,23 +42,19 @@ public class UserController {
      * @param userBean
      * @return
      */
-    @PostMapping("/login")
+    @SuppressWarnings("unchecked")
+	@PostMapping("/login")
     @ResponseBody
     public ResultData<Map<String, Object>> login(UserBean userBean, HttpServletRequest request) {
-
         Map<String, Object> resultMap = null;
-
-
         //获取cookie中的验证码
         String reqKaptcha = null;
-
         try {
 
             Cookie[] cookies = request.getCookies();
 
             for(Cookie cookie : cookies) {
                 String name = cookie.getName();
-
                 if("KAPTCHA".equalsIgnoreCase(name)) {
                     reqKaptcha = cookie.getValue();
                 }
@@ -74,7 +68,7 @@ public class UserController {
         }
 
         //验证验证码
-        String kaptcha = userBean.getKaptcha();
+        String kaptcha = userBean.getKaptcha().toUpperCase();
 
         if(kaptcha == null || "".equals(kaptcha)) {
             return ExceptionConstantsUtils.printErrorMessage(log, "请填写验证码");
@@ -102,7 +96,8 @@ public class UserController {
 
 
 
-    @PostMapping("/info")
+    @SuppressWarnings("unchecked")
+	@PostMapping("/info")
     @ResponseBody
     public ResultData<Map<String, Object>> getInfo(HttpServletRequest request) {
 
@@ -132,7 +127,8 @@ public class UserController {
     }
 
 
-    @PostMapping("/regis")
+    @SuppressWarnings("unchecked")
+	@PostMapping("/regis")
     @ResponseBody
     public ResultData<Map<String, Object>> regis(UserBean userBean) {
 
@@ -140,7 +136,6 @@ public class UserController {
         String loginAct = userBean.getLoginAct();
         String loginPwd = userBean.getLoginPwd();
         String email = userBean.getEmail();
-        String deptRoleId = userBean.getRoleId();
 
 
         if(loginAct == null || loginAct.equals("")) {

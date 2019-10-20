@@ -1,7 +1,7 @@
 package com.wlt.deviceledger.service.user.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.auth.IRoleDao;
 import com.wlt.deviceledger.dao.user.IUserDao;
@@ -10,7 +10,6 @@ import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.common.DateUtil;
 import com.wlt.deviceledger.util.common.JWTUtil;
-import com.wlt.deviceledger.util.common.UuidUtil;
 import com.wlt.deviceledger.util.config.UserToken;
 import com.wlt.deviceledger.util.enums.CommonEnum;
 import com.wlt.deviceledger.util.exception.user.UserException;
@@ -21,10 +20,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -209,10 +206,6 @@ public class UserServiceImpl implements IUserService{
 		userBean.setCreateTime(DateUtil.getCurrenDateTime());
 		userBean.setState(CommonEnum.RIGET.getCode());
 		userBean.setIsDelete(CommonEnum.RIGET.getCode());
-		userBean.setId(UuidUtil.GUUID());
-
-
-
 		try {
 			userDao.insert(userBean);
 		} catch (Exception e) {
@@ -230,6 +223,11 @@ public class UserServiceImpl implements IUserService{
 		userBeanQueryWrapper.setEntity(userBean);
 		return userDao.selectOne(userBeanQueryWrapper);
 
+	}
+
+	public List<Permission> getPerOfUserId(String id) {
+		
+		return userDao.getPerOfUserId(id);
 	}
 
 

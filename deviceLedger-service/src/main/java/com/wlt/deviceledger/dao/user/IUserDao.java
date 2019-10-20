@@ -3,6 +3,7 @@ package com.wlt.deviceledger.dao.user;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
 
 
@@ -23,5 +24,12 @@ public interface IUserDao extends BaseMapper<UserBean>{
      * @return
      */
     UserBean selectUserOfRole(String id);
+
+    /**
+     * 根据用户id 查询资源
+     * @param id
+     * @return
+     */
+	List<Permission> getPerOfUserId(String id);
 }
  

@@ -24,5 +24,24 @@
 		and u.state=0
 
 	</select>
+	
+	<select id="getPerOfUserId" parameterType="java.lang.String" resultType="com.wlt.deviceledger.bean.auth.Permission">
+
+		SELECT
+			p.* ,
+			pu.url as perUrl 
+		FROM
+			(
+		SELECT
+			rp.per_id 
+		FROM
+			tbl_role_per rp 
+		WHERE
+			rp.role_id IN ( SELECT ur.role_id FROM tbl_user_role ur WHERE ur.user_id = #{id} ) 
+			) t
+		RIGHT JOIN tbl_permission p ON p.id = t.per_id
+		LEFT JOIN tbl_per_url pu on pu.per_id = p.id
+
+	</select>
 
 </mapper>

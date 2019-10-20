@@ -35,7 +35,6 @@ public class UserBean {
 	private Integer isDelete;
 	private String createTime;
 	private String email;
-	private String roleId;
 
 	@TableField(exist = false)
 	private String kaptcha;

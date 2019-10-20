@@ -1,5 +1,7 @@
 package com.wlt.deviceledger.bean.auth;
 
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -12,9 +14,19 @@ import lombok.Data;
  */
 @Data
 @TableName("tbl_permission")
-public class Permission {
+public class Permission{
 
     private Integer id;
 
-    private String permission;
+    private String pid;
+    
+    private String url;
+    
+    private String routeName;
+    
+    private String routeIcon;
+    
+    @TableField(exist = false)
+    private String perUrl;
+
 }
