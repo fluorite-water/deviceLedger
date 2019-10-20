@@ -157,7 +157,7 @@ public class UserServiceImpl implements IUserService{
 			throw new UserException("无效token");
 		}
 
-		userBean.setId(id);
+		userBean.setLoginAct(id);
 
 		boolean verify = JWTUtil.verify(token, id);
 
@@ -228,6 +228,12 @@ public class UserServiceImpl implements IUserService{
 	public List<Permission> getPerOfUserId(String id) {
 		
 		return userDao.getPerOfUserId(id);
+	}
+
+	@Override
+	public List<Permission> findMenueList(String id) throws Exception {
+		
+		return userDao.findMenueList(id);
 	}
 
 
