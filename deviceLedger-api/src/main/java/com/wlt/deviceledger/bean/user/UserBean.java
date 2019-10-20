@@ -6,6 +6,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.auth.Role;
 import lombok.Data;
 
@@ -34,7 +35,7 @@ public class UserBean {
 	private Integer isDelete;
 	private String createTime;
 	private String email;
-	private String deptRoleId;
+	private String roleId;
 
 	@TableField(exist = false)
 	private String kaptcha;
@@ -44,6 +45,9 @@ public class UserBean {
 
 	@TableField(exist = false)
 	private List<Role> roleList;
+
+	@TableField(exist = false)
+	private List<Permission> permissionList;
 
 }
  

@@ -21,6 +21,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -113,76 +114,33 @@ public class UserServiceImpl implements IUserService{
 
 		Map<String, Object> returnMap = new HashMap<>();;
 
-		UserBean loginActUserBean = new UserBean();
-		loginActUserBean.setLoginAct(loginAct);
-		QueryWrapper<UserBean> loginActUserBeanQueryWrapper = new QueryWrapper<>();
-		loginActUserBeanQueryWrapper.setEntity(loginActUserBean);
+		String token = JWTUtil.createToken(loginAct);
 
+		UserToken shrio = new UserToken(loginAct, loginPwd ,token);
 
-		UserBean selectOneUserBean = userDao.selectOne(loginActUserBeanQueryWrapper);
-		if(selectOneUserBean == null) {
-			throw new UserException("账号不存在");
+		Subject subject = SecurityUtils.getSubject();
+
+		try {
+			subject.login(shrio);
+		} catch (UnknownAccountException uae) {
+			ExceptionConstantsUtils.printSysErrorMessage(log, uae, "用户名和密码不匹配");
+			throw new UserException("用户名和密码不匹配");
+		} catch (IncorrectCredentialsException ice) {
+			ExceptionConstantsUtils.printSysErrorMessage(log, ice,"用户名和密码不匹配");
+			new UserException("用户名和密码不匹配");
+		} catch (LockedAccountException lae) {
+			ExceptionConstantsUtils.printSysErrorMessage(log, lae,"LockedAccountException");
+			throw new UserException("LockedAccountException");
+		} catch (ExcessiveAttemptsException eae) {
+			ExceptionConstantsUtils.printSysErrorMessage(log, eae,"ExcessiveAttemptsException");
+			throw new UserException("ExcessiveAttemptsException");
+		} catch (AuthenticationException ae) {
+			ExceptionConstantsUtils.printSysErrorMessage(log, ae, ExceptionUtils.getMessage(ae));
+			throw new UserException("AuthenticationException");
 		}
 
-		String salt = selectOneUserBean.getSalt();
-
-		String passwordInDB = userBean.getLoginPwd();
-
-		int times = 2;
-		//MD5加密方式
-		String algorithmName = ConstantUtils.MD5_TYPE;
-		//加盐
-		String encodedPassword = new SimpleHash(algorithmName, loginPwd, salt, times).toString();
-
-		QueryWrapper<UserBean> userBeanQueryWrapper = new QueryWrapper<>();
-
-		UserBean checkUser = new UserBean();
-		checkUser.setLoginAct(loginAct);
-		checkUser.setLoginPwd(encodedPassword);
-
-		userBeanQueryWrapper.setEntity(checkUser);
-
-		UserBean user = userDao.selectOne(userBeanQueryWrapper);
-
-		if(user == null) {
-			throw new UserException("密码错误");
-		}
-
-		if(user.getLoginPwd().equals(encodedPassword)) {
-
-			String token = JWTUtil.createToken(loginAct);
-
-            UserToken shrio = new UserToken(loginAct, loginPwd ,token);
-
-			Subject subject = SecurityUtils.getSubject();
-
-			subject.getSession().setAttribute("user", user);
-
-			try {
-				subject.login(shrio);
-			} catch (UnknownAccountException uae) {
-				ExceptionConstantsUtils.printSysErrorMessage(log, uae, "用户名和密码不匹配");
-				throw new UserException("用户名和密码不匹配");
-			} catch (IncorrectCredentialsException ice) {
-				ExceptionConstantsUtils.printSysErrorMessage(log, ice,"用户名和密码不匹配");
-				new UserException("用户名和密码不匹配");
-			} catch (LockedAccountException lae) {
-				ExceptionConstantsUtils.printSysErrorMessage(log, lae,"LockedAccountException");
-				throw new UserException("LockedAccountException");
-			} catch (ExcessiveAttemptsException eae) {
-				ExceptionConstantsUtils.printSysErrorMessage(log, eae,"ExcessiveAttemptsException");
-				throw new UserException("ExcessiveAttemptsException");
-			} catch (AuthenticationException ae) {
-				ExceptionConstantsUtils.printSysErrorMessage(log, ae, ExceptionUtils.getMessage(ae));
-				throw new UserException("AuthenticationException");
-			}
-
-
-
-			returnMap.put("token", token);
-			return returnMap;
-		}
-		return null;
+		returnMap.put("token", token);
+		return returnMap;
 	}
 
 	/**
@@ -263,6 +221,15 @@ public class UserServiceImpl implements IUserService{
 		}
 
 		return true;
+	}
+
+	@Override
+	public UserBean getUser(UserBean userBean) {
+
+		QueryWrapper<UserBean> userBeanQueryWrapper = new QueryWrapper<>();
+		userBeanQueryWrapper.setEntity(userBean);
+		return userDao.selectOne(userBeanQueryWrapper);
+
 	}
 
 

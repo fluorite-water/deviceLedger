@@ -64,5 +64,13 @@ public interface IUserService {
      * @return
      */
     Boolean regis(UserBean userBean) throws Exception;
+
+	/**
+	 * 根据用户名和密码查询用户
+	 * @param username
+	 * @param loginPwd
+	 * @return
+	 */
+	UserBean getUser(UserBean userBean);
 }
  

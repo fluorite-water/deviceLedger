@@ -4,6 +4,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ClassName: RememberMeAuthenticationToken
@@ -19,11 +20,12 @@ public class UserToken extends UsernamePasswordToken {
     private String loginPwd;
     private boolean rememberMe;
     private String host;
-    private List roleList;
+    private List<Map<String, Object>> roleList;
     private String token;
+    private List<String> perList;
 
 
-    public UserToken(String username, String password, String token, List roleList) {
+    public UserToken(String username, String password, String token, List<Map<String, Object>> roleList) {
         super(username, password, false, (String)null);
         this.token = token;
         this.roleList = roleList;
@@ -33,8 +35,20 @@ public class UserToken extends UsernamePasswordToken {
     public UserToken(String username, String password, String token) {
         super(username, password, false, (String)null);
         this.token = token;
-        this.roleList = new ArrayList();
+        this.roleList = new ArrayList<>();
         this.loginPwd = password;
+    }
+
+    public void setRoleList(List roleList) {
+        this.roleList = roleList;
+    }
+
+    public List<String> getPerList() {
+        return perList;
+    }
+
+    public void setPerList(List<String> perList) {
+        this.perList = perList;
     }
 
     @Override
@@ -80,9 +94,6 @@ public class UserToken extends UsernamePasswordToken {
         return roleList;
     }
 
-    public void setRoleList(List roleList) {
-        this.roleList = roleList;
-    }
 
     public String getToken() {
         return token;

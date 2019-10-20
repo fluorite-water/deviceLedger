@@ -1,16 +1,19 @@
 package com.wlt.deviceledger.settings.shrio;
 
 import com.auth0.jwt.JWT;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.auth.Role;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.auth.IRoleService;
 import com.wlt.deviceledger.service.user.IUserService;
+import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.common.JWTUtil;
 import com.wlt.deviceledger.util.config.UserToken;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,7 @@ public class DatabaseRealm extends AuthorizingRealm {
 		System.out.println("————权限认证————");
 		String username = JWTUtil.getUsername(principals.toString());
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+
 		// 此处最好使用缓存提升速度
 		UserBean userBean = userService.getUserByLoginAct(username);
 		userBean = userService.getUserOfRole(userBean.getId());
@@ -70,17 +74,41 @@ public class DatabaseRealm extends AuthorizingRealm {
         }
 
 		UserBean userInfo = userService.getUserByLoginAct(username);
-		if (userInfo == null) {
-			throw new AuthenticationException("该用户不存在！");
+
+		if(userInfo == null) {
+			throw new AuthenticationException("账号不存在！");
 		}
-		if (userInfo.getState() == 1) {
+
+		String salt = userInfo.getSalt();
+
+		int times = 2;
+		//MD5加密方式
+		String algorithmName = ConstantUtils.MD5_TYPE;
+		//加盐
+		String encodedPassword = new SimpleHash(algorithmName, loginPwd, salt, times).toString();
+
+
+		UserBean userBean = new UserBean();
+		userBean.setLoginAct(username);
+		userBean.setLoginPwd(encodedPassword);
+		UserBean selUserBean = userService.getUser(userBean);
+
+
+
+		if (selUserBean == null) {
+			throw new AuthenticationException("账号或者密码不正确！");
+		}
+		if (selUserBean.getState() == 1) {
 			throw new AuthenticationException("该用户已被封号！");
 		}
 
-		if (userInfo.getIsDelete() == 1) {
+		if (selUserBean.getIsDelete() == 1) {
 			throw new AuthenticationException("该用户已被注销！");
 		}
-		return new SimpleAuthenticationInfo(username, loginPwd, "MyRealm");
+
+		SimpleAuthenticationInfo myRealm = new SimpleAuthenticationInfo(username, loginPwd, "MyRealm");
+
+		return myRealm;
 	}
 
 }

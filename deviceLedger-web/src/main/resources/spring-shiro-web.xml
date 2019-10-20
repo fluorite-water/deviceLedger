@@ -63,9 +63,8 @@
     <!-- shiro的核心配置:  配置shiroFileter id名必须与web.xml中的filtername保持一致 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
-        <property name="loginUrl" value="/logon.jsp" />
-        <property name="successUrl" value="/index.jsp" />
-        <property name="unauthorizedUrl" value="/unauthorized.jsp" />
+        <property name="loginUrl" value="/user/info" />
+        <property name="successUrl" value="/user/info" />
         <!-- shiro过滤器的具体配置 -->
         <!-- anon-匿名访问，authc-需要认证 -->
         <property name="filterChainDefinitions">

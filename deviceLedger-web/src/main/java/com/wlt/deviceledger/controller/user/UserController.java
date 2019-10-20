@@ -1,18 +1,17 @@
 package com.wlt.deviceledger.controller.user;
 
-import com.alibaba.fastjson.JSONObject;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.base.ResultData;
-import com.wlt.deviceledger.util.common.JWTUtil;
 import com.wlt.deviceledger.util.common.VerifyCodeUtils;
-import com.wlt.deviceledger.util.exception.user.UserException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -62,7 +61,7 @@ public class UserController {
             for(Cookie cookie : cookies) {
                 String name = cookie.getName();
 
-                if("kaptcha".equals(name)) {
+                if("KAPTCHA".equalsIgnoreCase(name)) {
                     reqKaptcha = cookie.getValue();
                 }
             }
@@ -71,7 +70,7 @@ public class UserController {
             }
 
         } catch (Exception e) {
-            return ExceptionConstantsUtils.printErrorMessage(log, "验证码过期");
+            return ExceptionConstantsUtils.printErrorMessage(log, e,"验证码过期");
         }
 
         //验证验证码
@@ -81,7 +80,7 @@ public class UserController {
             return ExceptionConstantsUtils.printErrorMessage(log, "请填写验证码");
         }
 
-        if(!kaptcha.equals(reqKaptcha)) {
+        if(!kaptcha.equalsIgnoreCase(reqKaptcha)) {
             return ExceptionConstantsUtils.printErrorMessage(log, "验证码错误");
         }
 
@@ -114,6 +113,8 @@ public class UserController {
         try {
             UserBean tokenUserBean = userService.getUserToken(token);
 
+
+
             if(tokenUserBean == null) {
                 return ExceptionConstantsUtils.printErrorMessage(log, "token无效");
             }
@@ -139,7 +140,7 @@ public class UserController {
         String loginAct = userBean.getLoginAct();
         String loginPwd = userBean.getLoginPwd();
         String email = userBean.getEmail();
-        String deptRoleId = userBean.getDeptRoleId();
+        String deptRoleId = userBean.getRoleId();
 
 
         if(loginAct == null || loginAct.equals("")) {
@@ -177,6 +178,8 @@ public class UserController {
 
         Cookie cookie = new Cookie("kaptcha", code);
         response.addCookie(cookie);
+        cookie.setMaxAge(60);
+        response.setHeader("kaptcha", code);
         response.setContentType("image/jpeg");
 
         VerifyCodeUtils.outputVerifyImage(100, 30, outputStream, code);
