@@ -3,9 +3,8 @@ package com.wlt.deviceledger.service.user;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
+import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
-import com.wlt.deviceledger.util.base.ResultData;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -64,5 +63,12 @@ public interface IUserService {
      * @return
      */
     Boolean regis(UserBean userBean) throws Exception;
+
+    /**
+     * 根据用户id 查询资源
+     * @param id
+     * @return
+     */
+	List<Permission> getPerOfUserId(String id);
 }
  

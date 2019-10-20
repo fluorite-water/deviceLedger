@@ -1,31 +1,30 @@
 package com.wlt.deviceledger.controller.user;
 
-import com.alibaba.fastjson.JSONObject;
-import com.wlt.deviceledger.bean.user.UserBean;
-import com.wlt.deviceledger.service.user.IUserService;
-import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
-import com.wlt.deviceledger.util.base.ResultData;
-import com.wlt.deviceledger.util.common.JWTUtil;
-import com.wlt.deviceledger.util.common.VerifyCodeUtils;
-import com.wlt.deviceledger.util.exception.user.UserException;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.wlt.deviceledger.bean.user.UserBean;
+import com.wlt.deviceledger.service.user.IUserService;
+import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
+import com.wlt.deviceledger.util.base.ResultData;
+import com.wlt.deviceledger.util.common.VerifyCodeUtils;
 
 /**
  * ClassName: UserController
- * Describe: TODO
- *
  * @Date: 2019/10/13 15:09
  * @Author: 杨开怀
  */
@@ -45,16 +44,13 @@ public class UserController {
      * @param userBean
      * @return
      */
-    @PostMapping("/login")
+    @SuppressWarnings("unchecked")
+	@PostMapping("/login")
     @ResponseBody
     public ResultData<Map<String, Object>> login(UserBean userBean, HttpServletRequest request) {
-
         Map<String, Object> resultMap = null;
-
-
         //获取cookie中的验证码
         String reqKaptcha = null;
-
         try {
 
             Cookie[] cookies = request.getCookies();
@@ -63,7 +59,7 @@ public class UserController {
                 String name = cookie.getName();
 
                 if("kaptcha".equals(name)) {
-                    reqKaptcha = cookie.getValue();
+                    reqKaptcha = cookie.getValue().toUpperCase();
                 }
             }
             if(reqKaptcha == null || "".equals(reqKaptcha)) {
@@ -75,7 +71,7 @@ public class UserController {
         }
 
         //验证验证码
-        String kaptcha = userBean.getKaptcha();
+        String kaptcha = userBean.getKaptcha().toUpperCase();
 
         if(kaptcha == null || "".equals(kaptcha)) {
             return ExceptionConstantsUtils.printErrorMessage(log, "请填写验证码");
@@ -103,7 +99,8 @@ public class UserController {
 
 
 
-    @PostMapping("/info")
+    @SuppressWarnings("unchecked")
+	@PostMapping("/info")
     @ResponseBody
     public ResultData<Map<String, Object>> getInfo(HttpServletRequest request) {
 
@@ -131,7 +128,8 @@ public class UserController {
     }
 
 
-    @PostMapping("/regis")
+    @SuppressWarnings("unchecked")
+	@PostMapping("/regis")
     @ResponseBody
     public ResultData<Map<String, Object>> regis(UserBean userBean) {
 
@@ -139,7 +137,6 @@ public class UserController {
         String loginAct = userBean.getLoginAct();
         String loginPwd = userBean.getLoginPwd();
         String email = userBean.getEmail();
-        String deptRoleId = userBean.getDeptRoleId();
 
 
         if(loginAct == null || loginAct.equals("")) {

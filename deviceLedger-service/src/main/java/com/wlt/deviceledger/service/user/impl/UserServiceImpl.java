@@ -1,7 +1,26 @@
 package com.wlt.deviceledger.service.user.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.auth.IRoleDao;
 import com.wlt.deviceledger.dao.user.IUserDao;
@@ -10,25 +29,9 @@ import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.common.DateUtil;
 import com.wlt.deviceledger.util.common.JWTUtil;
-import com.wlt.deviceledger.util.common.UuidUtil;
 import com.wlt.deviceledger.util.config.UserToken;
 import com.wlt.deviceledger.util.enums.CommonEnum;
 import com.wlt.deviceledger.util.exception.user.UserException;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -251,10 +254,6 @@ public class UserServiceImpl implements IUserService{
 		userBean.setCreateTime(DateUtil.getCurrenDateTime());
 		userBean.setState(CommonEnum.RIGET.getCode());
 		userBean.setIsDelete(CommonEnum.RIGET.getCode());
-		userBean.setId(UuidUtil.GUUID());
-
-
-
 		try {
 			userDao.insert(userBean);
 		} catch (Exception e) {
@@ -263,6 +262,12 @@ public class UserServiceImpl implements IUserService{
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<Permission> getPerOfUserId(String id) {
+		
+		return userDao.getPerOfUserId(id);
 	}
 
 
