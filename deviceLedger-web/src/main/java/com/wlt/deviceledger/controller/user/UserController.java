@@ -47,7 +47,7 @@ public class UserController {
      */
     @PostMapping("/login")
     @ResponseBody
-    public ResultData<Map<String, Object>> login(@RequestBody UserBean userBean, HttpServletRequest request) {
+    public ResultData<Map<String, Object>> login(UserBean userBean, HttpServletRequest request) {
 
         Map<String, Object> resultMap = null;
 
@@ -133,12 +133,13 @@ public class UserController {
 
     @PostMapping("/regis")
     @ResponseBody
-    public ResultData<Map<String, Object>> regis(@RequestBody UserBean userBean) {
+    public ResultData<Map<String, Object>> regis(UserBean userBean) {
 
 
         String loginAct = userBean.getLoginAct();
         String loginPwd = userBean.getLoginPwd();
         String email = userBean.getEmail();
+        String deptRoleId = userBean.getDeptRoleId();
 
 
         if(loginAct == null || loginAct.equals("")) {

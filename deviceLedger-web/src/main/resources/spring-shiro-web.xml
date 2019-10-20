@@ -70,7 +70,9 @@
         <!-- anon-匿名访问，authc-需要认证 -->
         <property name="filterChainDefinitions">
             <value>
-                /** = anon
+                /user/login = anon
+                /user/kaptcha = anon
+                /** = authc
             </value>
         </property>
     </bean>
