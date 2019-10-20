@@ -1,6 +1,7 @@
 package com.wlt.deviceledger.service.user.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.auth.IRoleDao;
 import com.wlt.deviceledger.dao.user.IUserDao;
@@ -10,8 +11,10 @@ import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.common.DateUtil;
 import com.wlt.deviceledger.util.common.JWTUtil;
 import com.wlt.deviceledger.util.common.UuidUtil;
+import com.wlt.deviceledger.util.config.UserToken;
 import com.wlt.deviceledger.util.enums.CommonEnum;
 import com.wlt.deviceledger.util.exception.user.UserException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -82,7 +85,6 @@ public class UserServiceImpl implements IUserService{
 */
 
 	@Override
-	@Async
 	public UserBean getUserByLoginAct(String loginAct) {
 		UserBean userBean = new UserBean();
 		userBean.setLoginAct(loginAct);
@@ -92,7 +94,6 @@ public class UserServiceImpl implements IUserService{
 	}
 
 	@Override
-	@Async
 	public UserBean getUserOfRole(String id) {
 		return userDao.selectUserOfRole(id);
 	}
@@ -110,22 +111,22 @@ public class UserServiceImpl implements IUserService{
 		String loginAct = userBean.getLoginAct();//账号
 		String loginPwd = userBean.getLoginPwd();//密码
 
-
 		Map<String, Object> returnMap = new HashMap<>();;
 
+		UserBean loginActUserBean = new UserBean();
+		loginActUserBean.setLoginAct(loginAct);
+		QueryWrapper<UserBean> loginActUserBeanQueryWrapper = new QueryWrapper<>();
+		loginActUserBeanQueryWrapper.setEntity(loginActUserBean);
 
-		QueryWrapper<UserBean> userBeanQueryWrapper = new QueryWrapper<>();
-		userBeanQueryWrapper.setEntity(userBean);
 
-		UserBean user = userDao.selectOne(userBeanQueryWrapper);
-
-		if(user == null) {
-			throw new UserException("账号或者密码错误");
+		UserBean selectOneUserBean = userDao.selectOne(loginActUserBeanQueryWrapper);
+		if(selectOneUserBean == null) {
+			throw new UserException("账号不存在");
 		}
 
-		String salt = user.getSalt();
+		String salt = selectOneUserBean.getSalt();
 
-		String passwordInDB = user.getLoginPwd();
+		String passwordInDB = userBean.getLoginPwd();
 
 		int times = 2;
 		//MD5加密方式
@@ -133,9 +134,26 @@ public class UserServiceImpl implements IUserService{
 		//加盐
 		String encodedPassword = new SimpleHash(algorithmName, loginPwd, salt, times).toString();
 
-		if(passwordInDB.equals(encodedPassword)) {
+		QueryWrapper<UserBean> userBeanQueryWrapper = new QueryWrapper<>();
 
-			UsernamePasswordToken shrio = new UsernamePasswordToken(loginAct, loginPwd);
+		UserBean checkUser = new UserBean();
+		checkUser.setLoginAct(loginAct);
+		checkUser.setLoginPwd(encodedPassword);
+
+		userBeanQueryWrapper.setEntity(checkUser);
+
+		UserBean user = userDao.selectOne(userBeanQueryWrapper);
+
+		if(user == null) {
+			throw new UserException("密码错误");
+		}
+
+		if(user.getLoginPwd().equals(encodedPassword)) {
+
+			String token = JWTUtil.createToken(loginAct);
+
+            UserToken shrio = new UserToken(loginAct, loginPwd ,token);
+
 			Subject subject = SecurityUtils.getSubject();
 
 			subject.getSession().setAttribute("user", user);
@@ -155,12 +173,12 @@ public class UserServiceImpl implements IUserService{
 				ExceptionConstantsUtils.printSysErrorMessage(log, eae,"ExcessiveAttemptsException");
 				throw new UserException("ExcessiveAttemptsException");
 			} catch (AuthenticationException ae) {
-				ExceptionConstantsUtils.printSysErrorMessage(log, ae,"AuthenticationException");
+				ExceptionConstantsUtils.printSysErrorMessage(log, ae, ExceptionUtils.getMessage(ae));
 				throw new UserException("AuthenticationException");
 			}
 
 
-			String token = JWTUtil.createToken(user.getId());
+
 			returnMap.put("token", token);
 			return returnMap;
 		}

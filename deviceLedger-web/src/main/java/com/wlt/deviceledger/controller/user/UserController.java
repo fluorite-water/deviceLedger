@@ -5,6 +5,7 @@ import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.base.ResultData;
+import com.wlt.deviceledger.util.common.JWTUtil;
 import com.wlt.deviceledger.util.common.VerifyCodeUtils;
 import com.wlt.deviceledger.util.exception.user.UserException;
 import org.apache.log4j.LogManager;
@@ -102,20 +103,13 @@ public class UserController {
 
 
 
-    @PostMapping("/token")
+    @PostMapping("/info")
     @ResponseBody
-    public ResultData<Map<String, Object>> getToken(@RequestBody UserBean userBean) {
+    public ResultData<Map<String, Object>> getInfo(HttpServletRequest request) {
 
         Map<String, Object> resultMap = null;
 
-        String token = userBean.getToken();
-
-        String kaptcha = userBean.getKaptcha();
-
-        if(kaptcha == null || kaptcha.equals("")) {
-            return ExceptionConstantsUtils.printErrorMessage(log, "请填写验证码");
-        }
-
+        String token = request.getHeader("token");
 
         try {
             UserBean tokenUserBean = userService.getUserToken(token);

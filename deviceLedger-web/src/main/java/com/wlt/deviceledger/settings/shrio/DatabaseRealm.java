@@ -1,20 +1,21 @@
 package com.wlt.deviceledger.settings.shrio;
 
+import com.auth0.jwt.JWT;
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.auth.Role;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.auth.IRoleService;
 import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.common.JWTUtil;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import com.wlt.deviceledger.util.config.UserToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Arrays;
 
 public class DatabaseRealm extends AuthorizingRealm {
 
@@ -51,12 +52,23 @@ public class DatabaseRealm extends AuthorizingRealm {
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
 		System.out.println("————身份认证方法————");
-		String token = (String) authenticationToken.getCredentials();
-		// 解密获得username，用于和数据库进行对比
+		//String token = String.valueOf((char[]) userToken.getCredentials());
+        //System.out.println("--------->" + token);
+        UserToken userToken = (UserToken)authenticationToken;
+
+        String loginPwd = userToken.getLoginPwd();
+        Object principal = userToken.getPrincipal();
+		System.out.println("--------->" + principal);
+
+        String token = userToken.getToken();
+
+        // 解密获得username，用于和数据库进行对比
 		String username = JWTUtil.getUsername(token);
-		if (username == null || !JWTUtil.verify(token, username)) {
-			throw new AuthenticationException("token认证失败！");
-		}
+
+		if(username == null || !JWTUtil.verify(token, username)) {
+		    throw new AuthenticationException("token认证失败！");
+        }
+
 		UserBean userInfo = userService.getUserByLoginAct(username);
 		if (userInfo == null) {
 			throw new AuthenticationException("该用户不存在！");
@@ -68,9 +80,7 @@ public class DatabaseRealm extends AuthorizingRealm {
 		if (userInfo.getIsDelete() == 1) {
 			throw new AuthenticationException("该用户已被注销！");
 		}
-		return new SimpleAuthenticationInfo(token, token, "MyRealm");
+		return new SimpleAuthenticationInfo(username, loginPwd, "MyRealm");
 	}
-
-
 
 }
