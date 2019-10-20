@@ -1,5 +1,6 @@
 package com.wlt.deviceledger.controller.user;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
@@ -49,6 +50,10 @@ public class UserController {
         Map<String, Object> resultMap = null;
         //获取cookie中的验证码
         String reqKaptcha = null;
+
+        String header = request.getHeader("kaptcha");
+        System.out.println("header");
+
         try {
 
             Cookie[] cookies = request.getCookies();
@@ -107,8 +112,6 @@ public class UserController {
 
         try {
             UserBean tokenUserBean = userService.getUserToken(token);
-
-
 
             if(tokenUserBean == null) {
                 return ExceptionConstantsUtils.printErrorMessage(log, "token无效");
@@ -174,9 +177,10 @@ public class UserController {
         Cookie cookie = new Cookie("kaptcha", code);
         response.addCookie(cookie);
         cookie.setMaxAge(60);
+        cookie.setSecure(false);
         response.setHeader("kaptcha", code);
         response.setContentType("image/jpeg");
-
+        //response.getWriter().write(jsonObject.toJSONString());
         VerifyCodeUtils.outputVerifyImage(100, 30, outputStream, code);
 
     }

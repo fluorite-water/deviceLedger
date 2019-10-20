@@ -2,6 +2,7 @@ package com.wlt.deviceledger.settings.shrio;
 
 
 import com.wlt.deviceledger.bean.auth.Permission;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -11,6 +12,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.auth.IRoleService;
@@ -32,13 +34,14 @@ public class DatabaseRealm extends AuthorizingRealm {
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		System.out.println("————权限认证————");
-		String username = JWTUtil.getUsername(principals.toString());
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+		Subject subject = SecurityUtils.getSubject();
+
+		UserBean user = (UserBean) subject.getSession().getAttribute("user");
 
 		// 此处最好使用缓存提升速度
-		UserBean userBean = userService.getUserByLoginAct(username);
 //		userBean = userService.getUserOfRole(userBean.getId());
-		List<Permission> perList = userService.getPerOfUserId(userBean.getId());
+
 		
 //		if (userBean == null || userBean.getRoleList().isEmpty()) {
 //			return authorizationInfo;
@@ -54,7 +57,9 @@ public class DatabaseRealm extends AuthorizingRealm {
 //			}
 //		}
 //		authorizationInfo.addObjectPermissions(perList);
-		for (Permission p : perList) {
+
+		List<Permission> permissionList = user.getPermissionList();
+		for (Permission p : permissionList) {
 			authorizationInfo.addStringPermission(p.getPerUrl());
 		}
 		return authorizationInfo;
@@ -112,6 +117,9 @@ public class DatabaseRealm extends AuthorizingRealm {
 		if (selUserBean.getIsDelete() == 1) {
 			throw new AuthenticationException("该用户已被注销！");
 		}
+
+		//查询权限
+		List<Permission> perList = userService.getPerOfUserId(userBean.getId());
 
 		SimpleAuthenticationInfo myRealm = new SimpleAuthenticationInfo(username, loginPwd, "MyRealm");
 
