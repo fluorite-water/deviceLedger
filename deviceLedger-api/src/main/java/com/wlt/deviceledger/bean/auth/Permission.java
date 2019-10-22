@@ -1,6 +1,9 @@
 package com.wlt.deviceledger.bean.auth;
 
 
+import java.io.Serializable;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -14,9 +17,14 @@ import lombok.Data;
  */
 @Data
 @TableName("tbl_permission")
-public class Permission{
+public class Permission implements Serializable{
 
-    private Integer id;
+    /**
+	 * 序列化
+	 */
+	private static final long serialVersionUID = -3893523947354816754L;
+
+	private Integer id;
 
     private String pid;
     
@@ -28,5 +36,8 @@ public class Permission{
     
     @TableField(exist = false)
     private String perUrl;
+    
+    @TableField(exist = false)
+    private List<Permission> children;
 
 }

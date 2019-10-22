@@ -1,6 +1,6 @@
 package com.wlt.deviceledger.controller.home;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,6 @@ import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.base.ResultData;
-import com.wlt.deviceledger.util.common.MyConstents;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -50,15 +49,48 @@ public class HomeController {
                 return ExceptionConstantsUtils.printErrorMessage(log, "token无效");
             }
             List<Permission> list =  userService.findMenueList(tokenUserBean.getId());
+            List<Permission> tree = toTree(list);
             res.setCode(ConstantUtils.SUCCESS_CODE);
             res.setMsg("菜单获取成功!");
-            res.setObj(list);
+            res.setObj(tree);
             res.setSuccess(ConstantUtils.SUCCESS_MESSAGE);
         } catch (Exception e) {
             return ExceptionConstantsUtils.printErrorMessage(log, e, e.getMessage());
         }
 		return res;
 	}
-	
+	/**
+      *转换树格式
+     * @param list
+     * @return
+     */
+    private static List<Permission> toTree(List<Permission> list) {
+        List<Permission> treeList = new ArrayList<Permission>();
+        for (Permission tree : list) {
+            if("0".equals(tree.getPid())){
+                treeList.add(tree);
+            }
+        }
+        for (Permission tree : list) {
+            toTreeChildren(treeList,tree);
+        }
+        return treeList;
+    }
+ 
+    private static void toTreeChildren(List<Permission> treeList, Permission tree) {
+        for (Permission node : treeList) {
+        	
+            if(tree.getPid().equals(node.getId()+"")){
+                if(node.getChildren() == null){
+                    node.setChildren(new ArrayList<Permission>());
+                }
+                node.getChildren().add(tree);
+            }
+            if(node.getChildren() != null){
+                toTreeChildren(node.getChildren(),tree);
+            }
+        }
+    }
+
 }
  
