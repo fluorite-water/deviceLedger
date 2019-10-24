@@ -179,7 +179,6 @@ public class UserController {
         cookie.setMaxAge(60);
         cookie.setSecure(false);
         response.setHeader("kaptcha", code);
-        response.setContentType("image/jpeg");
         //response.getWriter().write(jsonObject.toJSONString());
         VerifyCodeUtils.outputVerifyImage(100, 30, outputStream, code);
 
