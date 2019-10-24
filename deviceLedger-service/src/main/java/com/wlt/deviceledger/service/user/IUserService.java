@@ -77,5 +77,12 @@ public interface IUserService {
      * @return
      */
 	List<Permission> getPerOfUserId(String id);
+
+	/**
+	 * 获取资源
+	 * @param id
+	 * @return
+	 */
+	List<Permission> findMenueList(String id)throws Exception;
 }
  

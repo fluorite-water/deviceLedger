@@ -31,5 +31,13 @@ public interface IUserDao extends BaseMapper<UserBean>{
      * @return
      */
 	List<Permission> getPerOfUserId(String id);
+
+	/**
+	 * 获取资源
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	List<Permission> findMenueList(String id)throws Exception;
 }
  

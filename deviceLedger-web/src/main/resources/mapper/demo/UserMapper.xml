@@ -28,19 +28,31 @@
 	<select id="getPerOfUserId" parameterType="java.lang.String" resultType="com.wlt.deviceledger.bean.auth.Permission">
 
 		SELECT
-			p.* ,
-			pu.url as perUrl 
+			pu.url AS perUrl 
 		FROM
-			(
+			tbl_per_url pu
+		RIGHT JOIN ( 
+			SELECT rp.per_id FROM tbl_role_per rp 
+				LEFT JOIN tbl_user_role ur ON ur.role_id = rp.role_id 
+				WHERE ur.user_id = #{id}
+		) AS t ON t.per_id = pu.per_id
+
+	</select>
+	<select id="findMenueList" parameterType="java.lang.String" resultType="com.wlt.deviceledger.bean.auth.Permission">
+
 		SELECT
-			rp.per_id 
+			pe.id,
+			pe.pid,
+			pe.url,
+			pe.route_name,
+			pe.route_icon 
 		FROM
-			tbl_role_per rp 
-		WHERE
-			rp.role_id IN ( SELECT ur.role_id FROM tbl_user_role ur WHERE ur.user_id = #{id} ) 
-			) t
-		RIGHT JOIN tbl_permission p ON p.id = t.per_id
-		LEFT JOIN tbl_per_url pu on pu.per_id = p.id
+			tbl_permission pe
+		RIGHT JOIN ( 
+			SELECT rp.per_id FROM tbl_role_per rp 
+			LEFT JOIN tbl_user_role ur ON ur.role_id = rp.role_id 
+			WHERE ur.user_id = #{id}
+		) AS t ON t.per_id = pe.id
 
 	</select>
 
