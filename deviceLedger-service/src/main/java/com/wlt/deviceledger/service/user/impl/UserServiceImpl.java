@@ -236,6 +236,11 @@ public class UserServiceImpl implements IUserService{
 		return userDao.findMenueList(id);
 	}
 
+	@Override
+	public List<Permission> getPerByLoginAct(String loginAct) {
+		return userDao.selectPerOfLoginAct(loginAct);
+	}
+
 
 }
  

@@ -1,4 +1,4 @@
-package com.wlt.deviceledger.settings.shrio;
+package com.wlt.deviceledger.service.common.impl;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;

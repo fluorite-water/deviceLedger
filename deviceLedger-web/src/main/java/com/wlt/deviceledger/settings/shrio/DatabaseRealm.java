@@ -2,7 +2,14 @@ package com.wlt.deviceledger.settings.shrio;
 
 
 import com.wlt.deviceledger.bean.auth.Permission;
-import org.apache.shiro.SecurityUtils;
+import com.wlt.deviceledger.bean.user.UserBean;
+import com.wlt.deviceledger.service.user.IUserService;
+import com.wlt.deviceledger.util.base.ConstantUtils;
+import com.wlt.deviceledger.util.common.JWTUtil;
+import com.wlt.deviceledger.util.config.UserToken;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -12,55 +19,60 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.wlt.deviceledger.bean.user.UserBean;
-import com.wlt.deviceledger.service.auth.IRoleService;
-import com.wlt.deviceledger.service.user.IUserService;
-import com.wlt.deviceledger.util.base.ConstantUtils;
-import com.wlt.deviceledger.util.common.JWTUtil;
-import com.wlt.deviceledger.util.config.UserToken;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DatabaseRealm extends AuthorizingRealm {
 
     @Autowired
 	private IUserService userService;
 
-	@Autowired
-	private IRoleService roleService;
-
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		System.out.println("————权限认证————");
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-		Subject subject = SecurityUtils.getSubject();
+		// 能进入到这里，表示账号已经通过验证了
+		String LoginAct = (String) principals.getPrimaryPrincipal();
 
-		UserBean user = (UserBean) subject.getSession().getAttribute("user");
+		CacheManager cacheManager= new CacheManager();
 
-		// 此处最好使用缓存提升速度
-//		userBean = userService.getUserOfRole(userBean.getId());
+		Cache cache = cacheManager.getCache("authorizationCache");
 
-		
-//		if (userBean == null || userBean.getRoleList().isEmpty()) {
-//			return authorizationInfo;
-//		}
-//		for (Role role : userBean.getRoleList()) {
-//			authorizationInfo.addRole(role.getRole());
-//			role = roleService.getRoleOfPerm(role.getId());
-//			if (role == null || role.getPermissions().isEmpty()) {
-//				continue;
-//			}
-//			for (Permission p : role.getPermissions()) {
-//				authorizationInfo.addStringPermission(p.getPermission());
-//			}
-//		}
-//		authorizationInfo.addObjectPermissions(perList);
+		Element element = cache.get(LoginAct);
 
-		List<Permission> permissionList = user.getPermissionList();
-		for (Permission p : permissionList) {
-			authorizationInfo.addStringPermission(p.getPerUrl());
+		//从缓存中获取用户权限，如果为空，从数据库中查
+		if(element == null) {
+
+			//查询权限getPerOfUserId
+			List<Permission> perList = userService.getPerByLoginAct(LoginAct);
+
+			Element authBean = new Element(LoginAct, perList);
+
+			cache.put(authBean);
+			Set<String> perSet = new HashSet<>();
+
+			for(Permission permission : perList) {
+				String perUrl = permission.getPerUrl();
+				perSet.add(perUrl);
+			}
+
+			authorizationInfo.addStringPermissions(perSet);
+
+			//否则从缓存中查看
+		} else {
+			List<Permission> objectValue = (List<Permission>) element.getObjectValue();
+
+			Set<String> perSet = new HashSet<>();
+
+			for(Permission permission : objectValue) {
+				String perUrl = permission.getPerUrl();
+				perSet.add(perUrl);
+			}
+			authorizationInfo.addStringPermissions(perSet);
+
 		}
 		return authorizationInfo;
 	}
@@ -118,8 +130,20 @@ public class DatabaseRealm extends AuthorizingRealm {
 			throw new AuthenticationException("该用户已被注销！");
 		}
 
-		//查询权限
-		List<Permission> perList = userService.getPerOfUserId(userBean.getId());
+		CacheManager cacheManager= new CacheManager();
+
+		Cache cache = cacheManager.getCache("authorizationCache");
+
+		Element element = cache.get(username);
+
+		if(element == null) {
+			//查询权限
+			List<Permission> perList = userService.getPerOfUserId(userBean.getId());
+
+			Element authBean = new Element(username,perList);
+
+			cache.put(authBean);
+		}
 
 		SimpleAuthenticationInfo myRealm = new SimpleAuthenticationInfo(username, loginPwd, "MyRealm");
 

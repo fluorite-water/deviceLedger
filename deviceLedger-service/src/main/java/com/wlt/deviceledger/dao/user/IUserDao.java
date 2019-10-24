@@ -39,5 +39,12 @@ public interface IUserDao extends BaseMapper<UserBean>{
 	 * @throws Exception
 	 */
 	List<Permission> findMenueList(String id)throws Exception;
+
+	/**
+	 * 根据账号 查询资源
+	 * @param loginAct
+	 * @return
+	 */
+	List<Permission> selectPerOfLoginAct(String loginAct);
 }
  

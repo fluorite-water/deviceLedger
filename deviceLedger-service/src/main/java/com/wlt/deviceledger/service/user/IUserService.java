@@ -84,5 +84,13 @@ public interface IUserService {
 	 * @return
 	 */
 	List<Permission> findMenueList(String id)throws Exception;
+
+
+	/**
+	 * 获取资源
+	 * @param loginAct
+	 * @return
+	 */
+	List<Permission> getPerByLoginAct(String loginAct);
 }
  
