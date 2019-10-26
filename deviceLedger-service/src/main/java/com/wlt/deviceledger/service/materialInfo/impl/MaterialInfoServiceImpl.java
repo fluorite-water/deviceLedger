@@ -2,7 +2,6 @@ package com.wlt.deviceledger.service.materialInfo.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.wlt.deviceledger.bean.materialInfo.MaterialInfoBean;
-import com.wlt.deviceledger.bean.user.UserBaseMapperDempBean;
 import com.wlt.deviceledger.dao.materialInfo.IMaterialInfoDao;
 import com.wlt.deviceledger.service.materialInfo.IMaterialInfoService;
 

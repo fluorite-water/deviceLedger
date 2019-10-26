@@ -7,7 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.wlt.deviceledger.bean.auth.Permission;
-import com.wlt.deviceledger.bean.auth.Role;
+import com.wlt.deviceledger.bean.systemManager.RoleBean;
+
 import lombok.Data;
 
 /** 
@@ -43,7 +44,7 @@ public class UserBean {
 	private String token;
 
 	@TableField(exist = false)
-	private List<Role> roleList;
+	private List<RoleBean> roleList;
 
 	@TableField(exist = false)
 	private List<Permission> permissionList;

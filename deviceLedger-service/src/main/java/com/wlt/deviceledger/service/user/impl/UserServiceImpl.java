@@ -3,7 +3,7 @@ package com.wlt.deviceledger.service.user.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
-import com.wlt.deviceledger.dao.auth.IRoleDao;
+import com.wlt.deviceledger.dao.systemManager.IRoleDao;
 import com.wlt.deviceledger.dao.user.IUserDao;
 import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.base.ConstantUtils;

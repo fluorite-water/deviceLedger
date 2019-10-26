@@ -19,7 +19,9 @@ public class DeptRole {
 
     private Integer id;
 
-    private String role;
+    private String roleId;
+    
+    private Integer deptId;
 
     @TableField(exist = false)
     private List<Permission> permissions;

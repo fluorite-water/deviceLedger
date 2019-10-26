@@ -7,11 +7,11 @@
 		<result column="user_name" property="userName" />
 		<result column="login_act" property="loginAct" />
 		<result column="login_pwd" property="loginPwd" />
-		<collection property="roleList" javaType="com.wlt.deviceledger.bean.auth.Role">
-			<id column="id" property="id" />
-			<result column="dept_code" property="deptCode" />
-			<result column="role" property="role" />
-		</collection>
+<!-- 		<collection property="roleList" javaType="com.wlt.deviceledger.bean.auth.Role"> -->
+<!-- 			<id column="id" property="id" /> -->
+<!-- 			<result column="dept_code" property="deptCode" /> -->
+<!-- 			<result column="role" property="role" /> -->
+<!-- 		</collection> -->
 	</resultMap>
 
 	<select id="selectUserOfRole" resultMap="BaseResult">
