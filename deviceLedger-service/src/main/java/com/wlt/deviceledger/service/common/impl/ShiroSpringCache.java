@@ -1,4 +1,4 @@
-package com.wlt.deviceledger.settings.shrio;
+package com.wlt.deviceledger.service.common.impl;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

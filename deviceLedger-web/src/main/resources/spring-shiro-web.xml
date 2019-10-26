@@ -62,7 +62,7 @@
 
 
     <!-- 配置自定义缓存管理器，中引入redis缓存管理器 -->
-    <bean id = "shiroSpringCacheManager" class="com.wlt.deviceledger.settings.shrio.ShiroSpringCacheManager">
+    <bean id = "shiroSpringCacheManager" class="com.wlt.deviceledger.service.common.impl.ShiroSpringCacheManager">
         <property name="cacheManager" ref="cacheManager"/>
     </bean>
 

@@ -56,4 +56,17 @@
 
 	</select>
 
+
+	<select id="getPerOfLoginAct" parameterType="java.lang.String" resultType="com.wlt.deviceledger.bean.auth.Permission">
+		SELECT
+			pu.url AS perUrl
+		FROM
+			tbl_per_url pu
+		RIGHT JOIN (
+			SELECT rp.per_id FROM tbl_role_per rp
+				LEFT JOIN tbl_user_role ur ON ur.role_id = rp.role_id
+				WHERE ur.login_act = #{id}
+		) AS t ON t.per_id = pu.per_id
+	</select>
+
 </mapper>
