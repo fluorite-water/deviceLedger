@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wlt.deviceledger.dao.materialInfo.IMaterialInfoDao">
+	
+	<update id="updateMeterNum" parameterType="com.wlt.deviceledger.bean.declare.MaterDeclareBean" >
+		UPDATE tbl_material_info 
+			SET material_num = 
+			(
+					(
+						SELECT 
+							mater_num FROM tbl_mater_declare WHERE id = #{id} 
+					 ) + material_num 
+			)
+		WHERE
+			id = #{materId}
+	</update>
+	
+	<update id="updateMeterReceiveNum" parameterType="com.wlt.deviceledger.bean.declare.MaterDeclareBean" >
+		UPDATE tbl_material_info 
+			SET material_num = 
+			(
+				 material_num -
+				 (
+						SELECT  mater_num FROM tbl_mater_receive WHERE id = #{id} 
+				 )  
+			)
+		WHERE
+			id = #{materId}
+	</update>
+	
+	<select id="declareList" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			m.id AS id,
+			d.id AS declareId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_declare d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1 
+			AND d.user_id = #{userId} 
+		ORDER BY
+			d.create_time DESC
+	</select>
+	
+	<select id="receiveList" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			m.id AS id,
+			d.id AS receiveId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.receive_reason AS receiveReason,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_receive d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1 
+			AND d.user_id = #{userId}
+		ORDER BY
+			d.create_time DESC
+	</select>
+	
+	<select id="deptDeclareList" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			m.id AS id,
+			d.id AS declareId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_declare d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1 
+			AND (d.approval_user_id = #{userId} OR d.user_id = #{userId})
+		ORDER BY
+			d.create_time DESC
+	</select>
+	<select id="deptReceiveList" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			m.id AS id,
+			d.id AS receiveId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.receive_reason AS receiveReason,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_receive d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1 
+			AND (d.approval_user_id = #{userId} OR d.user_id = #{userId})
+		ORDER BY
+			d.create_time DESC
+	</select>
+	
+	<select id="DeviceDeclareList" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			m.id AS id,
+			d.id AS declareId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_declare d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1
+		ORDER BY
+			d.create_time DESC
+	</select>
+	<select id="DeviceReceiveList" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			m.id AS id,
+			d.id AS receiveId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.receive_reason AS receiveReason,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_receive d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1 
+		ORDER BY
+			d.create_time DESC
+	</select>
+</mapper>
