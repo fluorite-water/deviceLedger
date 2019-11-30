@@ -9,6 +9,7 @@ import com.wlt.deviceledger.dao.user.IUserDao;
 import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
+import com.wlt.deviceledger.util.base.ResultData;
 import com.wlt.deviceledger.util.common.DateUtil;
 import com.wlt.deviceledger.util.common.JWTUtil;
 import com.wlt.deviceledger.util.common.MD5Util;
@@ -277,6 +278,65 @@ public class UserServiceImpl implements IUserService{
 	@Override
 	public List<Permission> getPerByLoginAct(String loginAct) {
 		return userDao.selectPerOfLoginAct(loginAct);
+	}
+
+	@Override
+	public ResultData<Object> addUser(UserBean bean) throws Exception {
+		ResultData<Object> res = new ResultData<Object>();
+		// 查询账号是否已被使用
+		QueryWrapper<UserBean> queryWrapper = new QueryWrapper<>();
+		UserBean userBean = new UserBean();
+		userBean.setLoginAct(bean.getLoginAct());
+		queryWrapper.setEntity(userBean);
+		UserBean selectOne = userDao.selectOne(queryWrapper);
+		if(selectOne == null) {
+			res.setCode(ConstantUtils.ERROR_CODE);
+			res.setMsg("该账号已被使用，请更换账号");
+			res.setSuccess(false);
+			return res;
+		}
+		// 账号可用
+		int u = userDao.insert(bean);
+		if(u > 0) {
+			res.setCode(ConstantUtils.SUCCESS_CODE);
+			res.setMsg("用户添加成功");
+			res.setSuccess(true);
+		}else {
+			res.setCode(ConstantUtils.ERROR_CODE);
+			res.setMsg("用户添加失败，请检查网络");
+			res.setSuccess(false);
+		}
+		return res;
+	}
+
+	@Override
+	public ResultData<Object> updateUser(UserBean bean) throws Exception {
+		
+		ResultData<Object> res = new ResultData<Object>();
+		// 查询账号是否已被使用
+		QueryWrapper<UserBean> queryWrapper = new QueryWrapper<>();
+		UserBean userBean = new UserBean();
+		userBean.setLoginAct(bean.getLoginAct());
+		queryWrapper.setEntity(userBean);
+		UserBean selectOne = userDao.selectOne(queryWrapper);
+		if(selectOne == null) {
+			res.setCode(ConstantUtils.ERROR_CODE);
+			res.setMsg("该账号已被使用，请更换账号");
+			res.setSuccess(false);
+			return res;
+		}
+		// 账号可用
+		int u = userDao.updateById(bean);
+		if(u > 0) {
+			res.setCode(ConstantUtils.SUCCESS_CODE);
+			res.setMsg("用户信息修改成功");
+			res.setSuccess(true);
+		}else {
+			res.setCode(ConstantUtils.ERROR_CODE);
+			res.setMsg("用户信息修改失败，请检查网络");
+			res.setSuccess(false);
+		}
+		return res;
 	}
 
 

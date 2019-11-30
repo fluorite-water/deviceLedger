@@ -5,7 +5,11 @@ import java.util.Map;
 
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
+<<<<<<< HEAD
 import org.springframework.cache.annotation.CachePut;
+=======
+import com.wlt.deviceledger.util.base.ResultData;
+>>>>>>> f25b66cd8d80568d590526937bd0659e6fb6b725
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -92,5 +96,20 @@ public interface IUserService {
 	 * @return
 	 */
 	List<Permission> getPerByLoginAct(String loginAct);
+
+	/**
+	 * 添加用户
+	 * @param bean
+	 * @return
+	 */
+	ResultData<Object> addUser(UserBean bean)throws Exception;
+
+	/**
+	 * 修改用户信息
+	 * @param bean
+	 * @return
+	 * @throws Exception
+	 */
+	ResultData<Object> updateUser(UserBean bean)throws Exception;
 }
  

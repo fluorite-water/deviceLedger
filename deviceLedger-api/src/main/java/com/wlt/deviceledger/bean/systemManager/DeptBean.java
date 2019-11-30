@@ -3,7 +3,9 @@ package com.wlt.deviceledger.bean.systemManager;
 import java.io.Serializable;
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
@@ -24,6 +26,7 @@ public class DeptBean implements Serializable{
 	 */
 	private static final long serialVersionUID = 7221622679681095817L;
 
+	@TableId(value = "id",type = IdType.AUTO)
 	private Integer id;
 	
 	private Integer pid;

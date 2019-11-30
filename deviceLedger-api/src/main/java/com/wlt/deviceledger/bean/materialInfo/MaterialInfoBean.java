@@ -2,13 +2,16 @@ package com.wlt.deviceledger.bean.materialInfo;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-@TableName(value = "material_info")  // 指定表名
+@TableName(value = "tbl_material_info")  // 指定表名
 public class MaterialInfoBean implements Serializable {
     /**
      * 主键
      */
+	@TableId(value = "id",type = IdType.AUTO)
     private String id;
 
     /**

@@ -1,6 +1,7 @@
 package com.wlt.deviceledger.service.materialInfo.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -39,7 +40,7 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 		@SuppressWarnings("rawtypes")
 		QueryWrapper<MaterialInfoBean> queryWrapper = new QueryWrapper();
 		queryWrapper.setEntity(bean);
-		bean.setIsDelete("0");
+		bean.setIsDelete("1");
 		List<MaterialInfoBean> list = dao.selectList(queryWrapper);
 		return list;
 	}
@@ -74,6 +75,62 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 		Integer update = dao.updateById(entity);
 		
 		return update;
+	}
+
+
+	@Override
+	public MaterialInfoBean findbean(MaterialInfoBean bean) throws Exception {
+		MaterialInfoBean b = dao.selectById(bean.getId());
+		return b;
+	}
+
+
+	@Override
+	public List<Map<String, Object>> declareList(Integer pageNum, Integer pageSize)throws Exception {
+		List<Map<String, Object>> list = null;
+		PageHelper.startPage(pageNum, pageSize);
+		Integer roleId=3;
+		if(roleId==1) {
+			// 普通用户 根据自己userId 查询
+			list = dao.declareList(1);
+		}else if(roleId==2) {
+			// 部门管理员 根据userId，或 审批人是自己 查询
+			list = dao.deptDeclareList(1);
+		}else if(roleId == 3) {
+			// 设备管理员 查看所有
+			list = dao.DeviceDeclareList();
+		}else if(roleId == 4) {
+			// 公司主管 查看所有
+			list = dao.DeviceDeclareList();
+		}else {
+			return list;
+		}
+		return list;
+	}
+
+
+	@Override
+	public List<Map<String, Object>> receiveList(Integer pageNum, Integer pageSize) throws Exception {
+		
+		List<Map<String, Object>> list = null;
+		PageHelper.startPage(pageNum, pageSize);
+		Integer roleId=3;
+		if(roleId==1) {
+			// 普通用户 根据自己userId 查询
+			list = dao.receiveList(1);
+		}else if(roleId==2) {
+			// 部门管理员 根据userId，或 审批人是自己 查询
+			list = dao.deptReceiveList(1);
+		}else if(roleId == 3) {
+			// 设备管理员 查看所有
+			list = dao.DeviceReceiveList();
+		}else if(roleId == 4) {
+			// 公司主管 查看所有
+			list = dao.DeviceReceiveList();
+		}else {
+			return list;
+		}
+		return list;
 	}
 }
  

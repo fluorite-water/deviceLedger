@@ -1,6 +1,7 @@
 package com.wlt.deviceledger.service.materialInfo;
 
 import java.util.List;
+import java.util.Map;
 
 import com.wlt.deviceledger.bean.materialInfo.MaterialInfoBean;
 import com.wlt.deviceledger.util.base.ResultData;
@@ -36,6 +37,33 @@ public interface IMaterialInfoService {
 	 * @return
 	 */
 	Integer remove(String id) throws Exception;
+
+
+	/**
+	 * 根据材料id 查询材料信息bean
+	 * @param bean
+	 * @return
+	 * @throws Exception
+	 */
+	MaterialInfoBean findbean(MaterialInfoBean bean)throws Exception;
+
+
+	/**
+	 * 申报记录
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	List<Map<String, Object>> declareList(Integer pageNum, Integer pageSize)throws Exception;
+
+
+	/**
+	 * 领取记录
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	List<Map<String, Object>> receiveList(Integer pageNum, Integer pageSize)throws Exception;
 
 }
  

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wlt.deviceledger.dao.purchas.IPurchasManageDao">
+	
+	<select id="findList" resultType="java.util.Map"  parameterType="java.lang.Integer">
+		SELECT
+			m.id AS id,
+			d.id AS declareId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_declare d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1 
+			AND d.approval_state = 4 
+			AND d.is_purchase = 0
+		ORDER BY
+			d.create_time DESC
+	</select>
+	
+	<select id="findReceiveList" resultType="java.util.Map"  parameterType="java.lang.Integer">
+		SELECT
+			m.id AS id,
+			d.id AS receiveId,
+			m.material_name AS materialName,
+			u.user_name AS userName,
+			d.mater_num AS materNum,
+			u.login_act AS loginAct,
+			d.create_time AS createTime,
+			d.approval_state AS approvalState,
+			d.speed_case AS speedCase,
+			d.receive_reason AS receiveReason,
+			d.is_purchase AS  isPurchase
+		FROM
+			tbl_mater_receive d
+			LEFT JOIN tbl_material_info m ON m.id = d.mater_id
+			LEFT JOIN tbl_user u ON u.id = d.user_id 
+		WHERE
+			d.is_delete = 1 
+			AND d.approval_state = 4 
+			AND d.is_purchase = 0
+		ORDER BY
+			d.create_time DESC
+	</select>
+</mapper>
