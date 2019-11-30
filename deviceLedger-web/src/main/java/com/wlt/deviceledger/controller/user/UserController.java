@@ -3,6 +3,7 @@ package com.wlt.deviceledger.controller.user;
 import com.alibaba.fastjson.JSONObject;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.user.IUserService;
+import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.base.ResultData;
 import com.wlt.deviceledger.util.common.VerifyCodeUtils;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletOutputStream;
@@ -101,6 +103,11 @@ public class UserController {
 
 
 
+    /**
+     * 查看用户信息
+     * @param request
+     * @return
+     */
     @SuppressWarnings("unchecked")
 	@PostMapping("/info")
     @ResponseBody
@@ -129,7 +136,12 @@ public class UserController {
         return ExceptionConstantsUtils.printSuccessMessage(log, "登录成功", resultMap);
     }
 
-
+    
+    /**
+     * 注册用户
+     * @param userBean
+     * @return
+     */
     @SuppressWarnings("unchecked")
 	@PostMapping("/regis")
     @ResponseBody
@@ -184,5 +196,47 @@ public class UserController {
 
     }
 
+    /**
+     *  添加用户
+     * @param bean
+     * @return
+     */
+    @RequestMapping(value="/addUser",method=RequestMethod.POST)
+    @ResponseBody
+    public ResultData<Object> addUser(UserBean bean){
+    	ResultData<Object> res = new ResultData<Object>();
+    	try {
+    		res = userService.addUser(bean);
+		} catch (Exception e) {
+			log.info("用户添加异常"+e);
+			res.setCode(ConstantUtils.ERROR_CODE);
+			res.setMsg("用户添加异常，请检查网络");
+			res.setSuccess(false);
+			e.printStackTrace();
+		}
+		return res;
+    	
+    }
+    /**
+     *  修改用户信息
+     * @param bean
+     * @return
+     */
+    @RequestMapping(value="/updateUser",method=RequestMethod.POST)
+    @ResponseBody
+    public ResultData<Object> updateUser(UserBean bean){
+    	ResultData<Object> res = new ResultData<Object>();
+    	try {
+    		res = userService.updateUser(bean);
+    	} catch (Exception e) {
+    		log.info("修改用户信息异常"+e);
+    		res.setCode(ConstantUtils.ERROR_CODE);
+    		res.setMsg("修改用户信息异常，请检查网络");
+    		res.setSuccess(false);
+    		e.printStackTrace();
+    	}
+    	return res;
+    	
+    }
 
 }

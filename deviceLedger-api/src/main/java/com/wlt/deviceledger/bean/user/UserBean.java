@@ -26,6 +26,7 @@ public class UserBean {
 	/**
 	 * 序列化
 	 */
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 396085214682707224L;
 	private String id;
 	private String userName;
@@ -36,7 +37,8 @@ public class UserBean {
 	private Integer isDelete;
 	private String createTime;
 	private String email;
-
+	private String deptId;
+	private String roleId;
 	@TableField(exist = false)
 	private String kaptcha;
 

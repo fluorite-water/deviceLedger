@@ -3,7 +3,36 @@ package com.wlt.deviceledger.util.base;
 
 public class ConstantUtils {
 
-
+	/********************* 审批状态码***********************/
+	/**
+	 * 0 待审批
+	 */
+	public static final Integer APPROVAL_STATE0 = 0;
+	/**
+	 * 1 本部么管理员审批
+	 */
+	public static final Integer APPROVAL_STATE1 = 1;
+	/**
+	 * 2 设备主管部门审批
+	 */
+	public static final Integer APPROVAL_STATE2 = 2;
+	/**
+	 * 3 公司主管汇总
+	 */
+	public static final Integer APPROVAL_STATE3 = 3;
+	/**
+	 * 4 采购部门正在采购中
+	 */
+	public static final Integer APPROVAL_STATE4 = 4;
+	/**
+	 * 5  采购完成
+	 */
+	public static final Integer APPROVAL_STATE5 = 5;
+	/**
+	 * 9  审批已拒绝
+	 */
+	public static final Integer APPROVAL_STATE9 = 9;
+	
     public static final String SUCCESS_CODE = "200";
 
     public static final String ERROR_CODE = "10000";

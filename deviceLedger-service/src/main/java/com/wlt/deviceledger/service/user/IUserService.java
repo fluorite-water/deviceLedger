@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
+import com.wlt.deviceledger.util.base.ResultData;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -92,5 +93,20 @@ public interface IUserService {
 	 * @return
 	 */
 	List<Permission> getPerByLoginAct(String loginAct);
+
+	/**
+	 * 添加用户
+	 * @param bean
+	 * @return
+	 */
+	ResultData<Object> addUser(UserBean bean)throws Exception;
+
+	/**
+	 * 修改用户信息
+	 * @param bean
+	 * @return
+	 * @throws Exception
+	 */
+	ResultData<Object> updateUser(UserBean bean)throws Exception;
 }
  
