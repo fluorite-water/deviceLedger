@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
+import org.springframework.cache.annotation.CachePut;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -47,7 +48,7 @@ public interface IUserService {
      * @return
      * @throws Exception
      */
-    Map<String, Object> login(UserBean userBean) throws Exception;
+    Map<String, Object> login(UserBean userBean, String sessionId) throws Exception;
 
     /**
      * 获取用户信息
@@ -66,8 +67,7 @@ public interface IUserService {
 
 	/**
 	 * 根据用户名和密码查询用户
-	 * @param username
-	 * @param loginPwd
+	 * @param userBean
 	 * @return
 	 */
 	UserBean getUser(UserBean userBean);

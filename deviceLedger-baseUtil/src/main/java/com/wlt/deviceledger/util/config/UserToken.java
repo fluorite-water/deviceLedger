@@ -26,7 +26,7 @@ public class UserToken extends UsernamePasswordToken {
 
 
     public UserToken(String username, String password, String token, List<Map<String, Object>> roleList) {
-        super(username, password, false, (String)null);
+        super(username, password);
         this.token = token;
         this.roleList = roleList;
         this.loginPwd = password;

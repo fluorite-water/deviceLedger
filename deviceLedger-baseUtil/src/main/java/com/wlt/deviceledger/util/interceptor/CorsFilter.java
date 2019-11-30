@@ -35,14 +35,15 @@ public class CorsFilter implements Filter{
 		//设置响应编码集
 		response.setContentType("text/html;charset=utf-8");
 		//设置跨域
+
+		String id = ((HttpServletRequest) req).getSession().getId();
+		System.out.println("--------------->" + id);
+
 		response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
-		response.setHeader("Access-Control-Allow-Credentials", "true");
-		response.setHeader("P3P", "CP=CAO PSA OUR");
-		if (request.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(request.getMethod())) {
-			response.addHeader("Access-Control-Allow-Methods", "POST,GET,TRACE,OPTIONS");
-			response.addHeader("Access-Control-Allow-Headers", "Content-Type,Origin,Accept");
-			response.addHeader("Access-Control-Max-Age", "120");
-		}
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");//允许跨域的请求方式
+		response.setHeader("Access-Control-Max-Age", "3600");//预检请求的间隔时间
+		response.setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With,userId,token,Access-Control-Allow-Headers,Set-Cookie");//允许跨域请求携带的请求头
+		response.setHeader("Access-Control-Allow-Credentials","true");//若要返回cookie、携带seesion等信息则将此项设置我true
 		//放行
 		chain.doFilter(request, response);
 	}

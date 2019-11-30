@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -46,45 +47,16 @@ public class UserController {
     @SuppressWarnings("unchecked")
 	@PostMapping("/login")
     @ResponseBody
-    public ResultData<Map<String, Object>> login(UserBean userBean, HttpServletRequest request) {
+    public ResultData<Map<String, Object>> login(@RequestBody UserBean userBean, HttpServletRequest request) {
         Map<String, Object> resultMap = null;
         //获取cookie中的验证码
-        String reqKaptcha = null;
+        String sessionId = request.getSession().getId();
 
-        String header = request.getHeader("kaptcha");
-        System.out.println("header");
+        request.getSession().setAttribute("user", "a");
 
-        try {
-
-            Cookie[] cookies = request.getCookies();
-
-            for(Cookie cookie : cookies) {
-                String name = cookie.getName();
-                if("KAPTCHA".equalsIgnoreCase(name)) {
-                    reqKaptcha = cookie.getValue();
-                }
-            }
-            if(reqKaptcha == null || "".equals(reqKaptcha)) {
-                return ExceptionConstantsUtils.printErrorMessage(log, "验证码过期");
-            }
-
-        } catch (Exception e) {
-            return ExceptionConstantsUtils.printErrorMessage(log, e,"验证码过期");
-        }
-
-        //验证验证码
-        String kaptcha = userBean.getKaptcha().toUpperCase();
-
-        if(kaptcha == null || "".equals(kaptcha)) {
-            return ExceptionConstantsUtils.printErrorMessage(log, "请填写验证码");
-        }
-
-        if(!kaptcha.equalsIgnoreCase(reqKaptcha)) {
-            return ExceptionConstantsUtils.printErrorMessage(log, "验证码错误");
-        }
 
         try {
-            resultMap = userService.login(userBean);
+            resultMap = userService.login(userBean, sessionId);
 
             if(resultMap == null) {
                 return ExceptionConstantsUtils.printErrorMessage(log, "获取token失败");
@@ -93,8 +65,6 @@ public class UserController {
         } catch (Exception e) {
             return ExceptionConstantsUtils.printErrorMessage(log, e, e.getMessage());
         }
-
-
 
         return ExceptionConstantsUtils.printSuccessMessage(log, "获取token成功" , resultMap);
     }
@@ -119,6 +89,7 @@ public class UserController {
 
             resultMap = new HashMap<>();
             resultMap.put("user", tokenUserBean);
+            request.getSession().setAttribute("user", tokenUserBean);
 
         } catch (Exception e) {
             return ExceptionConstantsUtils.printErrorMessage(log, e, e.getMessage());

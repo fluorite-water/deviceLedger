@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+			http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 <!--    &lt;!&ndash;Shiro&ndash;&gt;
     &lt;!&ndash; Realm实现 &ndash;&gt;
@@ -37,6 +38,7 @@
         <property name="realm" ref="myShiroRealm" />
         <property name="cacheManager" ref="shiroSpringCacheManager" />
         <property name="sessionManager" ref="sessionManager"/>
+        <!--<property name="subjectFactory" ref="subjectFactory" />-->
     </bean>
 
     <!-- 密码错误5次锁定半小时
@@ -46,24 +48,29 @@
         <property name="passwordHash" ref="passwordHash"/>
     </bean>-->
 
-
+    <!-- Subject工厂 -->
+    <!--<bean id="subjectFactory" class="com.wlt.deviceledger.settings.shrio.StatelessDefaultSubjectFactory"/>
+-->
     <!-- 項目自定义的Realm,从数据库中获取用户的安全数据 -->
     <bean id="myShiroRealm" class="com.wlt.deviceledger.settings.shrio.DatabaseRealm">
         <!-- 配置缓存管理器-->
         <property name="cacheManager" ref="shiroSpringCacheManager" />
         <!-- 配置加密器 -->
-        <property name="credentialsMatcher">
-            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
-                <property name="hashAlgorithmName" value="MD5"></property> <!-- 加密算法的名称 -->
-                <property name="hashIterations" value="1024"></property> <!-- 配置加密的次数 -->
-            </bean>
-        </property>
+
+        <property name="credentialsMatcher" ref="hashedCredentialsMatcher" />
+    </bean>
+
+    <bean id="hashedCredentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <property name="hashAlgorithmName" value="MD5"></property> <!-- 加密算法的名称 -->
+        <property name="hashIterations" value="2"></property> <!-- 配置加密的次数 -->
+        <property name="storedCredentialsHexEncoded" value="true" />
     </bean>
 
 
     <!-- 配置自定义缓存管理器，中引入redis缓存管理器 -->
     <bean id = "shiroSpringCacheManager" class="com.wlt.deviceledger.service.common.impl.ShiroSpringCacheManager">
         <property name="cacheManager" ref="cacheManager"/>
+
     </bean>
 
 
@@ -74,6 +81,19 @@
         <property name="cacheManager" ref="shiroSpringCacheManager"/>
     </bean>
 
+    <bean id="sessionStorageEvaluator" class="org.apache.shiro.mgt.DefaultSessionStorageEvaluator">
+        <property name="sessionStorageEnabled" value="false"/>
+    </bean>
+
+
+    <!-- 配置需要向Cookie中保存数据的配置模版 -->
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="session-id"/>
+        <!-- 保证该系统不会受到跨域的脚本操作供给 -->
+        <property name="httpOnly" value="true"/>
+        <!-- 定义Cookie的过期时间，单位为秒，如果设置为-1表示浏览器关闭，则Cookie消失 -->
+        <property name="maxAge" value="-1"/>
+    </bean>
 
     <!-- Spring提供的基于的Ehcache实现的缓存管理器 -->
     <!-- 如果有多个ehcacheManager要在bean加上p:shared="true" -->
@@ -92,20 +112,37 @@
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
 
 
-    <!-- 会话管理器 -->
-    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
-        <!-- 设置全局会话超时时间 半小时  单位是毫秒-->
-        <property name="globalSessionTimeout" value="1800000"/>
-        <!-- url上带sessionId 默认为true -->
-        <property name="sessionIdUrlRewritingEnabled" value="false"/>
-        <property name="sessionDAO" ref="sessionDAO"/>
+    <!-- 定义会话管理器的操作 -->
+    <bean id="sessionManager"
+          class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- 定义的是全局的session会话超时时间，此操作会覆盖web.xml文件中的超时时间配置 -->
+        <property name="globalSessionTimeout" value="1000000"/>
+        <!-- 删除所有无效的Session对象，此时的session被保存在了内存里面 -->
+        <property name="deleteInvalidSessions" value="true"/>
+        <!-- 定义要使用的无效的Session定时调度器 -->
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
+        <!-- 需要让此session可以使用该定时调度器进行检测 -->
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <!-- 所有的session一定要将id设置到Cookie之中，需要提供有Cookie的操作模版 -->
+        <property name="sessionIdCookie" ref="sessionIdCookie"/>
+        <!-- 定义sessionIdCookie模版可以进行操作的启用 -->
+        <property name="sessionIdCookieEnabled" value="true"/>
     </bean>
 
+    <!-- 配置session的定时验证检测程序类，以让无效的session释放 -->
+    <bean id="sessionValidationScheduler"
+          class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
+        <!-- 设置session的失效扫描间隔，单位为毫秒 -->
+        <property name="sessionValidationInterval" value="100000"/>
+        <!-- 随后还需要定义有一个会话管理器的程序类的引用 -->
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
 
-    <!-- shiro的核心配置:  配置shiroFileter id名必须与web.xml中的filtername保持一致 -->
+    <!-- shiro的核心配置:  utername保持一致 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
-        <property name="securityManager" ref="securityManager" />
+        <property name="securityManager" ref="securityManager"/>
         <property name="loginUrl" value="/user/info" />
+
         <property name="successUrl" value="/user/info" />
         <!-- shiro过滤器的具体配置 -->
         <!-- anon-匿名访问，authc-需要认证 -->
@@ -116,6 +153,19 @@
                 /** = anon
             </value>
         </property>
+
+        <property name="filters">
+            <util:map>
+                <entry key="authc" value-ref="JWTFilter" />
+            </util:map>
+        </property>
     </bean>
+
+   <bean id="JWTFilter" class="com.wlt.deviceledger.settings.shrio.RestAuthorizationFilter">
+    </bean>
+    <!--
+       <bean id="map" class="java.util.HashMap">
+           <property name="jwt" ref="JWTFilter" />
+       </bean>-->
 
 </beans>

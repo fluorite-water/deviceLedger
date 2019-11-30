@@ -3,9 +3,12 @@ package com.wlt.deviceledger.bean.user;
 import java.io.Serializable;
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.systemManager.RoleBean;
 
@@ -27,6 +30,7 @@ public class UserBean {
 	 * 序列化
 	 */
 	private static final long serialVersionUID = 396085214682707224L;
+	@TableId(value = "id" ,type = IdType.AUTO)
 	private String id;
 	private String userName;
 	private String loginAct;

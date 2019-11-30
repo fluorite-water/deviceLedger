@@ -1,6 +1,7 @@
 package com.wlt.deviceledger.service.user.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.shrio.JWTToken;
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.systemManager.IRoleDao;
@@ -10,7 +11,7 @@ import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import com.wlt.deviceledger.util.common.DateUtil;
 import com.wlt.deviceledger.util.common.JWTUtil;
-import com.wlt.deviceledger.util.config.UserToken;
+import com.wlt.deviceledger.util.common.MD5Util;
 import com.wlt.deviceledger.util.enums.CommonEnum;
 import com.wlt.deviceledger.util.exception.user.UserException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -104,17 +105,51 @@ public class UserServiceImpl implements IUserService{
 	 * @throws Exception
 	 */
 	@Override
-	public Map<String, Object> login(UserBean userBean) throws Exception {
+	public Map<String, Object> login(UserBean userBean, String seesionId) throws Exception {
 
 		String loginAct = userBean.getLoginAct();//账号
 		String loginPwd = userBean.getLoginPwd();//密码
 
+		loginPwd = MD5Util.getMD5(loginPwd);
+
 		Map<String, Object> returnMap = new HashMap<>();;
+
+		if(loginAct == null || "".equals(loginAct)) {
+			throw new UserException("请输入账号");
+		}
+
+		if(loginPwd == null || "".equals(loginPwd)) {
+			throw new UserException("请输入账号");
+		}
 
 		String token = JWTUtil.createToken(loginAct);
 
-		UserToken shrio = new UserToken(loginAct, loginPwd ,token);
+		JWTToken shrio = new JWTToken(token);
+		shrio.setLoginPwd(loginPwd);
+		shrio.setUsername(loginAct);
 
+		UserBean userInfo = getUserByLoginAct(loginAct);
+
+		String salt = userInfo.getSalt();
+		int times = 2;
+		//MD5加密方式
+		String algorithmName = ConstantUtils.MD5_TYPE;
+		//加盐
+		String encodedPassword = new SimpleHash(algorithmName, loginPwd, salt, times).toString();
+
+		UserBean queryUserBean = new UserBean();
+		queryUserBean.setLoginAct(loginAct);
+		queryUserBean.setLoginPwd(encodedPassword);
+		QueryWrapper queryWrapper = new QueryWrapper();
+		queryWrapper.setEntity(queryUserBean);
+		UserBean selUserBean = userDao.selectOne(queryWrapper);
+		if (selUserBean.getState() == 1) {
+			throw new AuthenticationException("该用户已被封号！");
+		}
+
+		if (selUserBean.getIsDelete() == 1) {
+			throw new AuthenticationException("该用户已被注销！");
+		}
 		Subject subject = SecurityUtils.getSubject();
 
 		try {
@@ -124,7 +159,7 @@ public class UserServiceImpl implements IUserService{
 			throw new UserException("用户名和密码不匹配");
 		} catch (IncorrectCredentialsException ice) {
 			ExceptionConstantsUtils.printSysErrorMessage(log, ice,"用户名和密码不匹配");
-			new UserException("用户名和密码不匹配");
+			throw new UserException("用户名和密码不匹配");
 		} catch (LockedAccountException lae) {
 			ExceptionConstantsUtils.printSysErrorMessage(log, lae,"LockedAccountException");
 			throw new UserException("LockedAccountException");
@@ -137,6 +172,7 @@ public class UserServiceImpl implements IUserService{
 		}
 
 		returnMap.put("token", token);
+		returnMap.put("seesionId", seesionId);
 		return returnMap;
 	}
 
@@ -191,6 +227,8 @@ public class UserServiceImpl implements IUserService{
 		if(loginPwd == null || loginPwd.equals("")) {
 			throw new UserException("请填写密码");
 		}
+
+		loginPwd = MD5Util.getMD5(loginPwd);
 
 		//盐
 		String salt = new SecureRandomNumberGenerator().nextBytes().toString();

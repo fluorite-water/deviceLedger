@@ -15,7 +15,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
  * @Date: 2019/10/7 18:08
  * @Author: 杨开怀
  */
-public class JWTUtil {
+public class JWTUtil  {
     /**
      * 过期时间 24 小时
      */
