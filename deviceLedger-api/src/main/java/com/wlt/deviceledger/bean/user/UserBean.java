@@ -41,8 +41,8 @@ public class UserBean {
 	private Integer isDelete;
 	private String createTime;
 	private String email;
-	private String deptId;
-	private String roleId;
+	private Integer deptId;
+	private Integer roleId;
 	@TableField(exist = false)
 	private String kaptcha;
 

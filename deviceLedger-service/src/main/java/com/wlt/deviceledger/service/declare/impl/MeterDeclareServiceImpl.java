@@ -3,6 +3,8 @@ package com.wlt.deviceledger.service.declare.impl;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wlt.deviceledger.bean.declare.ApproveRecord;
 import com.wlt.deviceledger.bean.declare.MaterDeclareBean;
+import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.declare.IApproveRecordDao;
 import com.wlt.deviceledger.dao.declare.IMeterDeclareDao;
 import com.wlt.deviceledger.dao.materialInfo.IMaterialInfoDao;
@@ -36,15 +39,16 @@ public class MeterDeclareServiceImpl implements IMeterDeclareService{
 	private IMaterialInfoDao materialInfoDao;
 
 	@Override
-	public ResultData<Object> addDeclare(MaterDeclareBean bean) throws Exception {
+	public ResultData<Object> addDeclare(MaterDeclareBean bean,HttpSession session) throws Exception {
 		ResultData<Object> res = new ResultData<Object>();
-		//这里需要获取用户信息id
-		// ?????????
-		
-		bean.setUserId(1);
-		
+		Object user =  session.getAttribute("user");
+		UserBean userBean = new UserBean();
+		if(user != null) {
+			userBean = (UserBean) user;
+		}
+		bean.setUserId(Integer.parseInt(userBean.getId()));
 		bean.setApprovalState(ConstantUtils.APPROVAL_STATE0);
-		bean.setApprovalUserId(1);
+//		bean.setApprovalUserId(Integer.parseInt(userBean.getId()));
 		bean.setCreateTime(DateUtil.getCurrenDateTime());
 		bean.setIsDelete(1);
 		bean.setIsPurchase(0);
@@ -64,13 +68,11 @@ public class MeterDeclareServiceImpl implements IMeterDeclareService{
 	}
 
 	@Override
-	public ResultData<Object> deptApprove(ApproveRecord bean) throws Exception {
+	public ResultData<Object> deptApprove(ApproveRecord bean,Integer userId) throws Exception {
 		ResultData<Object> res = new ResultData<Object>();
 		bean.setCreateTime(DateUtil.getCurrenDateTime());
-		bean.setUserId(1);
+		bean.setUserId(userId);
 		int dec = approveRecordDao.insert(bean);
-		int id = bean.getId();
-		System.out.println(id);
 		if(dec > 0) {
 			res.setCode(ConstantUtils.SUCCESS_CODE);
 			res.setMsg("审批成功");
@@ -92,17 +94,21 @@ public class MeterDeclareServiceImpl implements IMeterDeclareService{
 	}
 
 	@Override
-	public ResultData<Object> findDeptApproveList(Integer pageNum, Integer pageSize) throws Exception {
+	public ResultData<Object> findDeptApproveList(Integer pageNum, Integer pageSize,HttpSession session) throws Exception {
+		Object user =  session.getAttribute("user");
+		UserBean userBean = new UserBean();
+		Integer roleId =0;
+		if(user != null) {
+			userBean = (UserBean) user;
+			// 根据roleId,判断审批到了哪一层
+			roleId = userBean.getRoleId();
+		}
 		ResultData<Object> res = new ResultData<Object>();
 		List<Map<String,Object>> list = null;
-		// 获取用户id，roleId
-		//？？？？？
-		
 		PageHelper.startPage(pageNum, pageSize);
-		Integer roleId=3;
 		if(roleId==2) {
 			// 部门管理员 根据userId查询
-			list = dao.findDeptApproveList(1);
+			list = dao.findDeptApproveList(Integer.parseInt(userBean.getId()));
 		}else if(roleId == 3) {
 			// 设备管理员 根据 审批状态未1的查询
 			list = dao.findApproveList(1);

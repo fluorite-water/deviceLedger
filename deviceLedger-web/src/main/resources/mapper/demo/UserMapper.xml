@@ -47,6 +47,47 @@
 			pe.route_name,
 			pe.route_icon 
 		FROM
+			tbl_permission pe,
+			( SELECT u.role_id, rp.per_id FROM tbl_user u, tbl_role_per rp WHERE u.role_id = rp.role_id and u.id=#{id} ) t 
+		WHERE
+			t.per_id = pe.id
+
+	</select>
+	<select id="roleManue" parameterType="java.lang.Integer" resultType="com.wlt.deviceledger.bean.auth.Permission">
+
+		SELECT
+			pe.id,
+			pe.pid,
+			pe.url,
+			pe.route_name,
+			pe.route_icon 
+		FROM
+			tbl_permission pe,
+			( SELECT rp.per_id FROM tbl_role_per rp WHERE rp.role_id = #{roleId} ) t 
+		WHERE
+			t.per_id = pe.id
+
+	</select>
+	<select id="manueAll" resultType="com.wlt.deviceledger.bean.auth.Permission">
+
+		SELECT
+			pe.id,
+			pe.pid,
+			pe.url,
+			pe.route_name,
+			pe.route_icon 
+		FROM
+			tbl_permission pe
+	</select>
+<!-- 	<select id="findMenueList" parameterType="java.lang.String" resultType="com.wlt.deviceledger.bean.auth.Permission">
+
+		SELECT
+			pe.id,
+			pe.pid,
+			pe.url,
+			pe.route_name,
+			pe.route_icon 
+		FROM
 			tbl_permission pe
 		RIGHT JOIN ( 
 			SELECT rp.per_id FROM tbl_role_per rp 
@@ -54,7 +95,7 @@
 			WHERE ur.user_id = #{id}
 		) AS t ON t.per_id = pe.id
 
-	</select>
+	</select> -->
 
 
 	<select id="getPerOfLoginAct" parameterType="java.lang.String" resultType="com.wlt.deviceledger.bean.auth.Permission">

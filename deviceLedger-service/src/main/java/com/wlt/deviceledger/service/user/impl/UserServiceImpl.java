@@ -142,7 +142,7 @@ public class UserServiceImpl implements IUserService{
 		queryUserBean.setLoginAct(loginAct);
 		queryUserBean.setLoginPwd(encodedPassword);
 		QueryWrapper queryWrapper = new QueryWrapper();
-		queryWrapper.setEntity(queryUserBean);
+		queryWrapper.setEntity(queryUserBean);//07ae6504f35a6a77333074f5e40d5a14
 		UserBean selUserBean = userDao.selectOne(queryWrapper);
 		if (selUserBean.getState() == 1) {
 			throw new AuthenticationException("该用户已被封号！");
@@ -337,6 +337,17 @@ public class UserServiceImpl implements IUserService{
 			res.setSuccess(false);
 		}
 		return res;
+	}
+
+	@Override
+	public List<Permission> roleManue(Integer roleId) throws Exception {
+		return userDao.roleManue(roleId);
+	}
+
+	@Override
+	public List<Permission> manueAll() throws Exception{
+		
+		return userDao.manueAll();
 	}
 
 
