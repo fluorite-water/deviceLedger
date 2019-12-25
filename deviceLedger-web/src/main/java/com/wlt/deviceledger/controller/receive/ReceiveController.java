@@ -4,10 +4,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.wlt.deviceledger.bean.receive.ApproveReceiveRecordBean;
 import com.wlt.deviceledger.bean.receive.MaterReceiveBean;
@@ -85,7 +82,7 @@ public class ReceiveController {
 	 */
 	@RequestMapping(value = "/receiveApprove",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> receiveApprove(ApproveReceiveRecordBean bean){
+	public ResultData<Object> receiveApprove(@RequestBody ApproveReceiveRecordBean bean){
 		ResultData<Object> res = null;
 		try {
 			

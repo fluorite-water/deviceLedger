@@ -2,6 +2,7 @@ package com.wlt.deviceledger.service.systemManager.impl;
 
 import java.util.List;
 
+import com.wlt.deviceledger.bean.user.UserBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +49,22 @@ public class DeptServiceImpl implements IDeptService{
 
 	@Override
 	public int deleteDept(DeptBean bean) {
-		int delete = dao.updateById(bean);
+		int delete = dao.deleteById(bean);
 		return delete;
 	}
+
+    @Override
+    public List<DeptBean> getRoleListByPid(Integer pid) {
+
+	    QueryWrapper<DeptBean> queryWrapper = new QueryWrapper<>();
+	    DeptBean deptBean = new DeptBean();
+	    deptBean.setPid(pid);
+	    queryWrapper.setEntity(deptBean);
+        List<DeptBean> list = dao.selectList(queryWrapper);
+
+        return list;
+    }
+
 
 }
  

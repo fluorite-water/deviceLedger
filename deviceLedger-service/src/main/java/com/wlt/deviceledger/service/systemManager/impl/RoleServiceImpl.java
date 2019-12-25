@@ -27,7 +27,9 @@ public class RoleServiceImpl implements IRoleService{
 	public List<RoleBean> findList() throws Exception {
 		
 		QueryWrapper<RoleBean> queryWrapper = new QueryWrapper<RoleBean>();
-
+		RoleBean roleBean = new RoleBean();
+		roleBean.setIsDel(1);
+		queryWrapper.setEntity(roleBean);
 		List<RoleBean> list = dao.selectList(queryWrapper);
 		
 		return list;

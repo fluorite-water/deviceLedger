@@ -3,10 +3,13 @@ package com.wlt.deviceledger.controller.systomManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wlt.deviceledger.bean.systemManager.RoleBean;
+import com.wlt.deviceledger.util.base.ExceptionConstantsUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -65,7 +68,7 @@ public class DeptController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping("/addDept")
 	@ResponseBody
-	public ResultData addDept(DeptBean bean) {
+	public ResultData addDept(@RequestBody DeptBean bean) {
 		ResultData res = new ResultData();
 		try {
 			int i  = servce.addDept(bean);
@@ -95,7 +98,7 @@ public class DeptController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping("/updateDept")
 	@ResponseBody
-	public ResultData updateDept(DeptBean bean) {
+	public ResultData updateDept(@RequestBody DeptBean bean) {
 		ResultData res = new ResultData();
 		try {
 			int i  = servce.updateDept(bean);
@@ -125,7 +128,7 @@ public class DeptController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping("/deleteDept")
 	@ResponseBody
-	public ResultData deleteDept(DeptBean bean) {
+	public ResultData deleteDept(@RequestBody DeptBean bean) {
 		ResultData res = new ResultData();
 		try {
 			int i  = servce.deleteDept(bean);
@@ -180,5 +183,26 @@ public class DeptController {
            }
        }
    }
+
+
+    @RequestMapping("selDept")
+    @ResponseBody
+    public ResultData<DeptBean> deptList(@RequestBody DeptBean deptBean) {
+
+        Integer pid = deptBean.getPid();
+
+        if(pid == null) {
+            return ExceptionConstantsUtils.printErrorMessage(log, "父节点不能为空");
+        }
+
+        List<DeptBean> list = servce.getRoleListByPid(pid);
+
+        return ExceptionConstantsUtils.printSuccessMessage(log, "部门列表", list);
+    }
+
+
+
+
+
 }
  

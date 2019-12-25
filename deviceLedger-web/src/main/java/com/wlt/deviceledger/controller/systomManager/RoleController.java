@@ -6,6 +6,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -62,7 +63,7 @@ private static final  Logger log = LogManager.getLogger(MaterialController.class
 	@SuppressWarnings("rawtypes")
 	@RequestMapping("/addRole")
 	@ResponseBody
-	public ResultData addRole(RoleBean bean) {
+	public ResultData addRole(@RequestBody RoleBean bean) {
 		ResultData res = new ResultData();
 		try {
 			int i  = servce.addRole(bean);
@@ -92,7 +93,7 @@ private static final  Logger log = LogManager.getLogger(MaterialController.class
 	@SuppressWarnings("rawtypes")
 	@RequestMapping("/updateRole")
 	@ResponseBody
-	public ResultData updateRole(RoleBean bean) {
+	public ResultData updateRole(@RequestBody RoleBean bean) {
 		ResultData res = new ResultData();
 		try {
 			int i  = servce.updateRole(bean);
@@ -122,7 +123,7 @@ private static final  Logger log = LogManager.getLogger(MaterialController.class
 	@SuppressWarnings("rawtypes")
 	@RequestMapping("/deleteRole")
 	@ResponseBody
-	public ResultData deleteRole(RoleBean bean) {
+	public ResultData deleteRole(@RequestBody RoleBean bean) {
 		ResultData res = new ResultData();
 		try {
 			int i  = servce.deleteRole(bean);

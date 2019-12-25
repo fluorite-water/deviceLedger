@@ -1,8 +1,11 @@
 package com.wlt.deviceledger.service.user.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shrio.JWTToken;
 import com.wlt.deviceledger.bean.auth.Permission;
+import com.wlt.deviceledger.bean.systemManager.RoleBean;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.systemManager.IRoleDao;
 import com.wlt.deviceledger.dao.user.IUserDao;
@@ -111,8 +114,6 @@ public class UserServiceImpl implements IUserService{
 		String loginAct = userBean.getLoginAct();//账号
 		String loginPwd = userBean.getLoginPwd();//密码
 
-		loginPwd = MD5Util.getMD5(loginPwd);
-
 		Map<String, Object> returnMap = new HashMap<>();;
 
 		if(loginAct == null || "".equals(loginAct)) {
@@ -131,6 +132,14 @@ public class UserServiceImpl implements IUserService{
 
 		UserBean userInfo = getUserByLoginAct(loginAct);
 
+		if(userInfo == null) {
+			throw new RuntimeException("账号不存在");
+		}
+
+		if(userInfo.getIsDelete().equals(1)) {
+			throw new RuntimeException("账号已经被删除了");
+		}
+
 		String salt = userInfo.getSalt();
 		int times = 2;
 		//MD5加密方式
@@ -144,13 +153,19 @@ public class UserServiceImpl implements IUserService{
 		QueryWrapper queryWrapper = new QueryWrapper();
 		queryWrapper.setEntity(queryUserBean);
 		UserBean selUserBean = userDao.selectOne(queryWrapper);
-		if (selUserBean.getState() == 1) {
+
+		if(selUserBean == null) {
+			throw new RuntimeException("密码错误");
+		}
+
+		if (selUserBean.getState().equals(1)) {
 			throw new AuthenticationException("该用户已被封号！");
 		}
 
-		if (selUserBean.getIsDelete() == 1) {
+		if (selUserBean.getIsDelete().equals(1)) {
 			throw new AuthenticationException("该用户已被注销！");
 		}
+
 		Subject subject = SecurityUtils.getSubject();
 
 		try {
@@ -172,6 +187,16 @@ public class UserServiceImpl implements IUserService{
 			throw new UserException("AuthenticationException");
 		}
 
+		if(token == null || !token.equals(userInfo.getToken())) {
+			UserBean updateUser = new UserBean();
+			updateUser.setId(userInfo.getId());
+			updateUser.setToken(token);
+			updateUser.setLoginTime(DateUtil.getCurrenDateTime());
+			updateUser.setLoginFlag(1);
+			userDao.updateById(updateUser);
+		}
+
+		returnMap.put("user", userInfo);
 		returnMap.put("token", token);
 		returnMap.put("seesionId", seesionId);
 		return returnMap;
@@ -337,6 +362,23 @@ public class UserServiceImpl implements IUserService{
 			res.setSuccess(false);
 		}
 		return res;
+	}
+
+	@Override
+	public IPage<UserBean> getUserList(UserBean userBean) {
+		QueryWrapper<UserBean> queryWrapper = new QueryWrapper<>();
+		UserBean selUserWhere = new UserBean();
+		selUserWhere.setIsDelete(0);
+		List<UserBean> userBeans = userDao.selectList(queryWrapper);
+		Page<UserBean> pageBean = new Page<>();
+		IPage<UserBean> userBeanIPage = userDao.selectPage(pageBean, queryWrapper);
+		return userBeanIPage;
+	}
+
+	@Override
+	public RoleBean getRoleByRoleCode(String id) {
+		RoleBean roleBean = roleDao.selectById(id);
+		return roleBean;
 	}
 
 

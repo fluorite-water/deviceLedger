@@ -3,7 +3,9 @@ package com.wlt.deviceledger.service.user;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wlt.deviceledger.bean.auth.Permission;
+import com.wlt.deviceledger.bean.systemManager.RoleBean;
 import com.wlt.deviceledger.bean.user.UserBean;
 import org.springframework.cache.annotation.CachePut;
 import com.wlt.deviceledger.util.base.ResultData;
@@ -108,5 +110,20 @@ public interface IUserService {
 	 * @throws Exception
 	 */
 	ResultData<Object> updateUser(UserBean bean)throws Exception;
+
+	/**
+	 * 获取用户列表
+	 * @param userBean
+	 * @return
+	 */
+	IPage<UserBean> getUserList(UserBean userBean);
+
+	/**
+	 * 通过用户id获取角色
+	 * @param id
+	 * @return
+	 */
+	RoleBean getRoleByRoleCode(String id);
+
 }
  

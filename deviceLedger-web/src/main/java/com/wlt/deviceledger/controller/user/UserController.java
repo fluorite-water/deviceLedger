@@ -1,6 +1,8 @@
 package com.wlt.deviceledger.controller.user;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.wlt.deviceledger.bean.systemManager.RoleBean;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.user.IUserService;
 import com.wlt.deviceledger.util.base.ConstantUtils;
@@ -11,18 +13,17 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,15 +55,18 @@ public class UserController {
         //获取cookie中的验证码
         String sessionId = request.getSession().getId();
 
-        request.getSession().setAttribute("user", "a");
-
-
         try {
             resultMap = userService.login(userBean, sessionId);
+
 
             if(resultMap == null) {
                 return ExceptionConstantsUtils.printErrorMessage(log, "获取token失败");
             }
+
+            //删除返回的用户对象，并将其放入到sessioin中
+            Object user = resultMap.get("user");
+            request.getSession().setAttribute("user", user);
+            resultMap.remove("user");
 
         } catch (Exception e) {
             return ExceptionConstantsUtils.printErrorMessage(log, e, e.getMessage());
@@ -94,9 +98,13 @@ public class UserController {
                 return ExceptionConstantsUtils.printErrorMessage(log, "token无效");
             }
 
+            RoleBean roleBean= userService.getRoleByRoleCode(tokenUserBean.getRoleId());
+            List<RoleBean> roleBeanList = new ArrayList<>();
+            roleBeanList.add(roleBean);
+
             resultMap = new HashMap<>();
             resultMap.put("user", tokenUserBean);
-            request.getSession().setAttribute("user", tokenUserBean);
+            resultMap.put("role", roleBeanList);
 
         } catch (Exception e) {
             return ExceptionConstantsUtils.printErrorMessage(log, e, e.getMessage());
@@ -122,7 +130,8 @@ public class UserController {
         String loginAct = userBean.getLoginAct();
         String loginPwd = userBean.getLoginPwd();
         String email = userBean.getEmail();
-
+        String roleCode = userBean.getRoleId();
+        String deptCode = userBean.getDeptId();
 
         if(loginAct == null || loginAct.equals("")) {
             return ExceptionConstantsUtils.printErrorMessage(log, "请填写账号");
@@ -134,6 +143,14 @@ public class UserController {
 
         if(email == null || email.equals("")) {
             return ExceptionConstantsUtils.printErrorMessage(log, "请填写邮箱");
+        }
+
+        if(roleCode == null || "".equals(roleCode)) {
+            return ExceptionConstantsUtils.printErrorMessage(log, "请选择角色");
+        }
+
+        if(deptCode == null || "".equals(deptCode)) {
+            return ExceptionConstantsUtils.printErrorMessage(log, "请选择部门");
         }
 
         try {
@@ -209,5 +226,21 @@ public class UserController {
     	return res;
     	
     }
+
+    @PostMapping(value = "/list")
+    public ResultData<List<UserBean>> getUserList(HttpSession session, @RequestBody UserBean
+                                                  userBean) {
+        IPage<UserBean> resultData = null;
+        try {
+            resultData = userService.getUserList(userBean);
+        } catch (Exception e) {
+            return ExceptionConstantsUtils.printErrorMessage(log, e ,"获取用户列表异常");
+        }
+        return ExceptionConstantsUtils.printSuccessMessage(log, "获取用户列表成功" , resultData);
+    }
+
+
+
+
 
 }

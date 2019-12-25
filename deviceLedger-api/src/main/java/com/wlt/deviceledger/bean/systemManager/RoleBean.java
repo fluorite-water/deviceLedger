@@ -20,6 +20,7 @@ public class RoleBean {
 	@TableId(value = "id",type = IdType.AUTO)
 	private Integer id;
 	private String roleName;
+	private Integer isDel;
 
 }
  

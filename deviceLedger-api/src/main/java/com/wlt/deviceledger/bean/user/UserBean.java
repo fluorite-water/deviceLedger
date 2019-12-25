@@ -43,17 +43,24 @@ public class UserBean {
 	private String email;
 	private String deptId;
 	private String roleId;
-	@TableField(exist = false)
-	private String kaptcha;
+	private String token;
+	private String loginTime;
+	private Integer loginFlag;
 
 	@TableField(exist = false)
-	private String token;
+	private String kaptcha;
 
 	@TableField(exist = false)
 	private List<RoleBean> roleList;
 
 	@TableField(exist = false)
 	private List<Permission> permissionList;
+
+	@TableField(exist = false)
+	private String pageSize;
+
+	@TableField(exist = false)
+	private String pageNum;
 
 }
  

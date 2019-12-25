@@ -40,5 +40,11 @@ public interface IDeptService {
 	 */
 	int deleteDept(DeptBean bean);
 
+    /**
+     * 获取部门列表
+     * @param pid
+     * @return
+     */
+    List<DeptBean> getRoleListByPid(Integer pid);
 }
  
