@@ -3,6 +3,8 @@ package com.wlt.deviceledger.service.materialInfo;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import com.wlt.deviceledger.bean.materialInfo.MaterialInfoBean;
 import com.wlt.deviceledger.util.base.ResultData;
 
@@ -52,18 +54,20 @@ public interface IMaterialInfoService {
 	 * 申报记录
 	 * @param pageNum
 	 * @param pageSize
+	 * @param session 
 	 * @return
 	 */
-	List<Map<String, Object>> declareList(Integer pageNum, Integer pageSize)throws Exception;
+	List<Map<String, Object>> declareList(Integer pageNum, Integer pageSize, HttpSession session)throws Exception;
 
 
 	/**
 	 * 领取记录
 	 * @param pageNum
 	 * @param pageSize
+	 * @param session 
 	 * @return
 	 */
-	List<Map<String, Object>> receiveList(Integer pageNum, Integer pageSize)throws Exception;
+	List<Map<String, Object>> receiveList(Integer pageNum, Integer pageSize, HttpSession session)throws Exception;
 
 }
  

@@ -3,6 +3,8 @@ package com.wlt.deviceledger.controller.materialInfo;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageInfo;
 import com.wlt.deviceledger.bean.materialInfo.MaterialInfoBean;
+import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.materialInfo.IMaterialInfoService;
 import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ResultData;
@@ -86,19 +89,22 @@ public class MaterialController {
 	}
 	
 	/**
-	 * 添加修改材料信息
+	 * 添加材料信息
 	 * @param bean
 	 * @return
 	 */
 	@RequestMapping(value = "/edit",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData editMater(MaterialInfoBean bean) {
+	public ResultData editMater(MaterialInfoBean bean,HttpSession session) {
 		//先获取用户信息
-		
+		Object user =  session.getAttribute("user");
+		UserBean userBean = new UserBean();
+		if(user != null) {
+			userBean = (UserBean) user;
+		}
 		ResultData resultData = new ResultData();
-		//如果id为空
-		String id = bean.getId();
-		
+		Integer id = bean.getId();
+		bean.setUserId(Integer.parseInt(userBean.getId()));
 		try {
 			service.editMater(bean);
 			//添加
@@ -159,12 +165,12 @@ public class MaterialController {
 	@RequestMapping(value = "/declareList",method=RequestMethod.POST)
 	@ResponseBody
 	public  ResultData<Object> declareList(@RequestParam(defaultValue="1")Integer pageNum,
-			@RequestParam(defaultValue="20")Integer pageSize) {
+			@RequestParam(defaultValue="20")Integer pageSize,HttpSession session) {
 		
 			ResultData<Object> result = new ResultData<Object>();
 			List<Map<String, Object>> list;
 			try {
-				list = service.declareList(pageNum,pageSize);
+				list = service.declareList(pageNum,pageSize,session);
 				PageInfo<Map<String,Object>> info = new PageInfo<Map<String,Object>>(list);
 				result.setCode(ConstantUtils.SUCCESS_CODE);
 				result.setMsg("查询成功");
@@ -184,12 +190,12 @@ public class MaterialController {
 	@RequestMapping(value = "/receiveList",method=RequestMethod.POST)
 	@ResponseBody
 	public  ResultData<Object> receiveList(@RequestParam(defaultValue="1")Integer pageNum,
-			@RequestParam(defaultValue="20")Integer pageSize) {
+			@RequestParam(defaultValue="20")Integer pageSize,HttpSession session) {
 		
 		ResultData<Object> result = new ResultData<Object>();
 		List<Map<String, Object>> list;
 		try {
-			list = service.receiveList(pageNum,pageSize);
+			list = service.receiveList(pageNum,pageSize,session);
 			PageInfo<Map<String,Object>> info = new PageInfo<Map<String,Object>>(list);
 			result.setCode(ConstantUtils.SUCCESS_CODE);
 			result.setMsg("查询成功");

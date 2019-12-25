@@ -3,6 +3,8 @@ package com.wlt.deviceledger.service.materialInfo.impl;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.wlt.deviceledger.bean.materialInfo.MaterialInfoBean;
+import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.materialInfo.IMaterialInfoDao;
 import com.wlt.deviceledger.service.materialInfo.IMaterialInfoService;
 
@@ -53,7 +56,7 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 	public int editMater(MaterialInfoBean bean) throws Exception {
 		
 		//如果id为空
-		String id = bean.getId();
+		Integer id = bean.getId();
 		int edit=0;
 		//添加
 		if(id == null) {
@@ -70,7 +73,7 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 	public Integer remove(String id) throws Exception {
 		
 		MaterialInfoBean entity = new MaterialInfoBean();
-		entity.setId(id);
+		entity.setId(Integer.parseInt(id));
 		entity.setIsDelete("1");
 		Integer update = dao.updateById(entity);
 		
@@ -86,16 +89,23 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 
 
 	@Override
-	public List<Map<String, Object>> declareList(Integer pageNum, Integer pageSize)throws Exception {
+	public List<Map<String, Object>> declareList(Integer pageNum, Integer pageSize,HttpSession session)throws Exception {
 		List<Map<String, Object>> list = null;
 		PageHelper.startPage(pageNum, pageSize);
-		Integer roleId=3;
+		Object user =  session.getAttribute("user");
+		UserBean userBean = new UserBean();
+		Integer roleId =0;
+		if(user != null) {
+			userBean = (UserBean) user;
+			// 根据roleId,判断审批到了哪一层
+			roleId = userBean.getRoleId();
+		}
 		if(roleId==1) {
 			// 普通用户 根据自己userId 查询
-			list = dao.declareList(1);
+			list = dao.declareList(Integer.parseInt(userBean.getId()));
 		}else if(roleId==2) {
 			// 部门管理员 根据userId，或 审批人是自己 查询
-			list = dao.deptDeclareList(1);
+			list = dao.deptDeclareList(Integer.parseInt(userBean.getId()));
 		}else if(roleId == 3) {
 			// 设备管理员 查看所有
 			list = dao.DeviceDeclareList();
@@ -110,17 +120,23 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 
 
 	@Override
-	public List<Map<String, Object>> receiveList(Integer pageNum, Integer pageSize) throws Exception {
-		
+	public List<Map<String, Object>> receiveList(Integer pageNum, Integer pageSize,HttpSession session) throws Exception {
+		Object user =  session.getAttribute("user");
+		UserBean userBean = new UserBean();
+		Integer roleId =0;
+		if(user != null) {
+			userBean = (UserBean) user;
+			// 根据roleId,判断审批到了哪一层
+			roleId = userBean.getRoleId();
+		}
 		List<Map<String, Object>> list = null;
 		PageHelper.startPage(pageNum, pageSize);
-		Integer roleId=3;
 		if(roleId==1) {
 			// 普通用户 根据自己userId 查询
-			list = dao.receiveList(1);
+			list = dao.receiveList(Integer.parseInt(userBean.getId()));
 		}else if(roleId==2) {
 			// 部门管理员 根据userId，或 审批人是自己 查询
-			list = dao.deptReceiveList(1);
+			list = dao.deptReceiveList(Integer.parseInt(userBean.getId()));
 		}else if(roleId == 3) {
 			// 设备管理员 查看所有
 			list = dao.DeviceReceiveList();

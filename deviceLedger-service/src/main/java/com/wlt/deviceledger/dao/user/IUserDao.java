@@ -46,5 +46,18 @@ public interface IUserDao extends BaseMapper<UserBean>{
 	 * @return
 	 */
 	List<Permission> selectPerOfLoginAct(String loginAct);
+
+	/**
+	 * 根据角色id 查资源list
+	 * @param roleId
+	 * @return
+	 */
+	List<Permission> roleManue(Integer roleId)throws Exception;
+
+	/**
+	 * 查询所有菜单
+	 * @return
+	 */
+	List<Permission> manueAll() throws Exception;
 }
  

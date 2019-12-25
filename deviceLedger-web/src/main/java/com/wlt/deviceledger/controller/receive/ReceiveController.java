@@ -1,5 +1,7 @@
 package com.wlt.deviceledger.controller.receive;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.wlt.deviceledger.bean.receive.ApproveReceiveRecordBean;
 import com.wlt.deviceledger.bean.receive.MaterReceiveBean;
+import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.receive.IReceiveService;
 import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ResultData;
@@ -36,10 +39,10 @@ public class ReceiveController {
 	 */
 	@RequestMapping(value = "/addReceive",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> addReceive(MaterReceiveBean bean){
+	public ResultData<Object> addReceive(MaterReceiveBean bean,HttpSession session){
 		ResultData<Object> res = null;
 		try {
-			res = service.addReceive(bean);
+			res = service.addReceive(bean,session);
 		} catch (Exception e) {
 			log.info("领取材料异常"+e);
     		res.setCode(ConstantUtils.ERROR_CODE);
@@ -59,10 +62,10 @@ public class ReceiveController {
 	@ResponseBody
 	public ResultData<Object> findReceiveList(
 			@RequestParam(defaultValue="1")Integer pageNum,
-			@RequestParam(defaultValue="20")Integer pageSize){
+			@RequestParam(defaultValue="20")Integer pageSize,HttpSession session){
 		ResultData<Object> res = null;
 		try {
-			res = service.findReceiveList(pageNum,pageSize);
+			res = service.findReceiveList(pageNum,pageSize,session);
 			res.setCode(ConstantUtils.SUCCESS_CODE);
     		res.setMsg("查询成功");
     		res.setSuccess(ConstantUtils.SUCCESS_MESSAGE);
@@ -82,12 +85,19 @@ public class ReceiveController {
 	 */
 	@RequestMapping(value = "/receiveApprove",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> receiveApprove(@RequestBody ApproveReceiveRecordBean bean){
+	public ResultData<Object> receiveApprove(ApproveReceiveRecordBean bean,HttpSession session){
 		ResultData<Object> res = null;
 		try {
 			
 			// 根据roleId,判断审批到了哪一层
-			Integer roleId = 4;
+			Object user =  session.getAttribute("user");
+			UserBean userBean = new UserBean();
+			Integer roleId =0;
+			if(user != null) {
+				userBean = (UserBean) user;
+				// 根据roleId,判断审批到了哪一层
+				roleId = userBean.getRoleId();
+			}
 			Integer approvalState=0;
 			if(roleId==2) {
 				approvalState=ConstantUtils.APPROVAL_STATE1; // 本部门管理员
@@ -99,7 +109,7 @@ public class ReceiveController {
 				return res;
 			}
 			
-			res = service.receiveApprove(bean);
+			res = service.receiveApprove(bean,Integer.parseInt(userBean.getId()));
 			//审批通过后需修改审批状态
 			// 如果审批未通过
 			if(bean.getApproveState()==0) {

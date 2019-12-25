@@ -42,7 +42,7 @@ public class UserBean {
 	private String createTime;
 	private String email;
 	private String deptId;
-	private String roleId;
+	private Integer roleId;
 	private String token;
 	private String loginTime;
 	private Integer loginFlag;

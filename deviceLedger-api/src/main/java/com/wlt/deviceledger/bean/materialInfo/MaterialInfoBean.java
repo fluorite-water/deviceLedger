@@ -12,9 +12,9 @@ public class MaterialInfoBean implements Serializable {
      * 主键
      */
 	@TableId(value = "id",type = IdType.AUTO)
-    private String id;
+    private Integer id;
 
-    /**
+	 /**
      * 材料名称
      */
     private String materialName;
@@ -90,7 +90,17 @@ public class MaterialInfoBean implements Serializable {
     private String isDelete;
 
     /**
-     * material_info
+     * 修改日期
+     */
+    private String updateTime;
+
+    /**
+     * 用户id
+     */
+    private Integer userId;
+
+    /**
+     * tbl_material_info
      */
     private static final long serialVersionUID = 1L;
 
@@ -98,7 +108,7 @@ public class MaterialInfoBean implements Serializable {
      * 获取主键
      * @return id 主键
      */
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -106,7 +116,7 @@ public class MaterialInfoBean implements Serializable {
      * 设置主键
      * @param id 主键
      */
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -348,5 +358,37 @@ public class MaterialInfoBean implements Serializable {
      */
     public void setIsDelete(String isDelete) {
         this.isDelete = isDelete;
+    }
+
+    /**
+     * 获取修改日期
+     * @return update_time 修改日期
+     */
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    /**
+     * 设置修改日期
+     * @param updateTime 修改日期
+     */
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    /**
+     * 获取用户id
+     * @return user_id 用户id
+     */
+    public Integer getUserId() {
+        return userId;
+    }
+
+    /**
+     * 设置用户id
+     * @param userId 用户id
+     */
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

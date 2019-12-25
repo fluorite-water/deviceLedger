@@ -151,7 +151,7 @@ public class UserServiceImpl implements IUserService{
 		queryUserBean.setLoginAct(loginAct);
 		queryUserBean.setLoginPwd(encodedPassword);
 		QueryWrapper queryWrapper = new QueryWrapper();
-		queryWrapper.setEntity(queryUserBean);
+		queryWrapper.setEntity(queryUserBean);//07ae6504f35a6a77333074f5e40d5a14
 		UserBean selUserBean = userDao.selectOne(queryWrapper);
 
 		if(selUserBean == null) {
@@ -379,6 +379,15 @@ public class UserServiceImpl implements IUserService{
 	public RoleBean getRoleByRoleCode(String id) {
 		RoleBean roleBean = roleDao.selectById(id);
 		return roleBean;
+	}
+	public List<Permission> roleManue(Integer roleId) throws Exception {
+		return userDao.roleManue(roleId);
+	}
+
+	@Override
+	public List<Permission> manueAll() throws Exception{
+		
+		return userDao.manueAll();
 	}
 
 

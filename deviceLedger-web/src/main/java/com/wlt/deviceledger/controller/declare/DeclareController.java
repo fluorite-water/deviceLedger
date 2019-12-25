@@ -1,5 +1,7 @@
 package com.wlt.deviceledger.controller.declare;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.wlt.deviceledger.bean.declare.ApproveRecord;
 import com.wlt.deviceledger.bean.declare.MaterDeclareBean;
+import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.service.declare.IMeterDeclareService;
 import com.wlt.deviceledger.util.base.ConstantUtils;
 import com.wlt.deviceledger.util.base.ResultData;
@@ -34,10 +37,10 @@ public class DeclareController {
 	 */
 	@RequestMapping(value = "/addDeclare",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> addDeclare(MaterDeclareBean bean){
+	public ResultData<Object> addDeclare(MaterDeclareBean bean,HttpSession session){
 		ResultData<Object> res = null;
 		try {
-			res = service.addDeclare(bean);
+			res = service.addDeclare(bean, session);
 		} catch (Exception e) {
 			log.info("材料申报异常"+e);
     		res.setCode(ConstantUtils.ERROR_CODE);
@@ -55,12 +58,17 @@ public class DeclareController {
 	 */
 	@RequestMapping(value = "/Approve",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> deptApprove(@RequestBody ApproveRecord bean){
+	public ResultData<Object> deptApprove(ApproveRecord bean,HttpSession session){
+		Object user =  session.getAttribute("user");
+		UserBean userBean = new UserBean();
+		Integer roleId =0;
+		if(user != null) {
+			userBean = (UserBean) user;
+			// 根据roleId,判断审批到了哪一层
+			roleId = userBean.getRoleId();
+		}
 		ResultData<Object> res = null;
 		try {
-			
-			// 根据roleId,判断审批到了哪一层
-			Integer roleId = 4;
 			Integer approvalState=0;
 			if(roleId==2) {
 				approvalState=ConstantUtils.APPROVAL_STATE1; // 本部门管理员
@@ -72,7 +80,7 @@ public class DeclareController {
 				return res;
 			}
 			
-			res = service.deptApprove(bean);
+			res = service.deptApprove(bean,Integer.parseInt(userBean.getId()));
 			//审批通过后需修改审批状态
 			// 如果审批未通过
 			if(bean.getApproveState()==0) {
@@ -99,10 +107,10 @@ public class DeclareController {
 	@ResponseBody
 	public ResultData<Object> findDeptApproveList(
 			@RequestParam(defaultValue="1")Integer pageNum,
-			@RequestParam(defaultValue="20")Integer pageSize){
+			@RequestParam(defaultValue="20")Integer pageSize,HttpSession session){
 		ResultData<Object> res = null;
 		try {
-			res = service.findDeptApproveList(pageNum,pageSize);
+			res = service.findDeptApproveList(pageNum,pageSize,session);
 			res.setCode(ConstantUtils.SUCCESS_CODE);
     		res.setMsg("查询成功");
     		res.setSuccess(ConstantUtils.SUCCESS_MESSAGE);

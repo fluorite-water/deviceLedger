@@ -125,5 +125,17 @@ public interface IUserService {
 	 */
 	RoleBean getRoleByRoleCode(String id);
 
+	/*
+	 * 根据角色查资源
+	 * @param roleId
+	 * @return
+	 */
+	List<Permission> roleManue(Integer roleId)throws Exception;
+
+	/**
+	 * 查询所有菜单
+	 * @return
+	 */
+	List<Permission> manueAll()throws Exception;
 }
  

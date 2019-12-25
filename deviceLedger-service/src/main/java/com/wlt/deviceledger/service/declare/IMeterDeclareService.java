@@ -1,5 +1,7 @@
 package com.wlt.deviceledger.service.declare;
 
+import javax.servlet.http.HttpSession;
+
 import com.wlt.deviceledger.bean.declare.ApproveRecord;
 import com.wlt.deviceledger.bean.declare.MaterDeclareBean;
 import com.wlt.deviceledger.util.base.ResultData;
@@ -16,14 +18,15 @@ public interface IMeterDeclareService {
 	/**
 	 * 材料申报
 	 */
-	ResultData<Object> addDeclare(MaterDeclareBean bean)throws Exception;
+	ResultData<Object> addDeclare(MaterDeclareBean bean,HttpSession session)throws Exception;
 
 	/**
 	 * 本部门审批
 	 * @param bean
+	 * @param session 
 	 * @return
 	 */
-	ResultData<Object> deptApprove(ApproveRecord bean)throws Exception;
+	ResultData<Object> deptApprove(ApproveRecord bean, Integer userId)throws Exception;
 
 	/**
 	 * 修改审批状态
@@ -36,9 +39,10 @@ public interface IMeterDeclareService {
 	 * 本部门管理员查看申报信息list
 	 * @param pageSize 
 	 * @param pageNum 
+	 * @param session 
 	 * @return
 	 */
-	ResultData<Object> findDeptApproveList(Integer pageNum, Integer pageSize)throws Exception;
+	ResultData<Object> findDeptApproveList(Integer pageNum, Integer pageSize, HttpSession session)throws Exception;
 
 	/**
 	 * 完成采购

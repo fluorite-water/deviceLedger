@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -40,15 +41,15 @@ public class HomeController {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@PostMapping("/manue")
 	@ResponseBody
-	public ResultData getMenue(HttpServletRequest request) {
+	public ResultData getMenue(HttpServletRequest request,HttpSession session) {
 		ResultData res = new ResultData();
-        String token = request.getHeader("token");
         try {
-            UserBean tokenUserBean = userService.getUserToken(token);
-            if(tokenUserBean == null) {
-                return ExceptionConstantsUtils.printErrorMessage(log, "token无效");
-            }
-            List<Permission> list =  userService.findMenueList(tokenUserBean.getId());
+        	Object user =  session.getAttribute("user");
+    		UserBean userBean = new UserBean();
+    		if(user != null) {
+    			userBean = (UserBean) user;
+    		}
+            List<Permission> list =  userService.findMenueList(userBean.getId());
             List<Permission> tree = toTree(list);
             res.setCode(ConstantUtils.SUCCESS_CODE);
             res.setMsg("菜单获取成功!");
@@ -59,6 +60,50 @@ public class HomeController {
         }
 		return res;
 	}
+	
+	/**
+	 * 1.根据角色查资源
+	 * @param roleId
+	 * @return
+	 */
+	@PostMapping("/roleManue")
+	@ResponseBody
+	public ResultData<Object> roleManue(Integer roleId) {
+		ResultData<Object> res = new ResultData<Object>();
+        try {
+            List<Permission> list =  userService.roleManue(roleId);
+            List<Permission> tree = toTree(list);
+            res.setCode(ConstantUtils.SUCCESS_CODE);
+            res.setMsg("菜单获取成功!");
+            res.setObj(tree);
+            res.setSuccess(ConstantUtils.SUCCESS_MESSAGE);
+        } catch (Exception e) {
+            return ExceptionConstantsUtils.printErrorMessage(log, e, e.getMessage());
+        }
+		return res;
+	}
+	
+	/**
+	 * 2.查询所有资源
+	 * @return
+	 */
+	@PostMapping("/manueAll")
+	@ResponseBody
+	public ResultData<Object> manueAll() {
+		ResultData<Object> res = new ResultData<Object>();
+        try {
+            List<Permission> list =  userService.manueAll();
+            List<Permission> tree = toTree(list);
+            res.setCode(ConstantUtils.SUCCESS_CODE);
+            res.setMsg("菜单获取成功!");
+            res.setObj(tree);
+            res.setSuccess(ConstantUtils.SUCCESS_MESSAGE);
+        } catch (Exception e) {
+            return ExceptionConstantsUtils.printErrorMessage(log, e, e.getMessage());
+        }
+		return res;
+	}
+	
 	/**
       *转换树格式
      * @param list
