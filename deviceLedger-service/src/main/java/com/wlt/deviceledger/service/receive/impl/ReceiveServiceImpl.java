@@ -50,16 +50,12 @@ public class ReceiveServiceImpl implements IReceiveService{
 		if(user != null) {
 			userBean = (UserBean) user;
 		}
-		
 		bean.setUserId(Integer.parseInt(userBean.getId()));
-		
 		bean.setApprovalState(ConstantUtils.APPROVAL_STATE0);
-//		bean.setApprovalUserId();
 		bean.setCreateTime(DateUtil.getCurrenDateTime());
 		bean.setIsDelete(1);
 		bean.setIsPurchase(0);
 		bean.setIsRecall(1);
-//		bean.setIsSpeed(0);
 		int dec = dao.insert(bean);
 		if(dec > 0) {
 			res.setCode(ConstantUtils.SUCCESS_CODE);
