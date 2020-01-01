@@ -37,7 +37,7 @@ public class DeclareController {
 	 */
 	@RequestMapping(value = "/addDeclare",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> addDeclare(MaterDeclareBean bean,HttpSession session){
+	public ResultData<Object> addDeclare(@RequestBody MaterDeclareBean bean,HttpSession session){
 		ResultData<Object> res = null;
 		try {
 			res = service.addDeclare(bean, session);

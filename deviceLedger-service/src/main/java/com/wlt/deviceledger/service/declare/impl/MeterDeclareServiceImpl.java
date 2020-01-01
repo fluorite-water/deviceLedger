@@ -46,7 +46,7 @@ public class MeterDeclareServiceImpl implements IMeterDeclareService{
 		if(user != null) {
 			userBean = (UserBean) user;
 		}
-		bean.setUserId(Integer.parseInt(userBean.getId()));
+		bean.setUserId(Integer.valueOf(userBean.getId()));
 		bean.setApprovalState(ConstantUtils.APPROVAL_STATE0);
 //		bean.setApprovalUserId(Integer.parseInt(userBean.getId()));
 		bean.setCreateTime(DateUtil.getCurrenDateTime());

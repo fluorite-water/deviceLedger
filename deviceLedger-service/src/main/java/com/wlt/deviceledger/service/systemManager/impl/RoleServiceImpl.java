@@ -37,7 +37,7 @@ public class RoleServiceImpl implements IRoleService{
 
 	@Override
 	public int addRole(RoleBean bean) throws Exception {
-		
+		bean.setIsDel(0);
 		int insert = dao.insert(bean);
 		return insert;
 	}

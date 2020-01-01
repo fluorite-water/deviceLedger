@@ -1,6 +1,7 @@
 package com.wlt.deviceledger.dao.user;
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wlt.deviceledger.bean.auth.Permission;
@@ -59,5 +60,12 @@ public interface IUserDao extends BaseMapper<UserBean>{
 	 * @return
 	 */
 	List<Permission> manueAll() throws Exception;
+
+	/**
+	 * 查询用户列表
+	 * @param userBean
+	 * @return
+	 */
+	List<Map<String, Object>> selectUserList(UserBean userBean);
 }
  

@@ -6,13 +6,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.wlt.deviceledger.bean.auth.Permission;
 import com.wlt.deviceledger.bean.user.UserBean;
@@ -68,7 +67,9 @@ public class HomeController {
 	 */
 	@PostMapping("/roleManue")
 	@ResponseBody
-	public ResultData<Object> roleManue(Integer roleId) {
+	public ResultData<Object> roleManue(@RequestBody JSONObject jsonObject) {
+        Integer roleId = jsonObject.getInteger("roleId");
+
 		ResultData<Object> res = new ResultData<Object>();
         try {
             List<Permission> list =  userService.roleManue(roleId);

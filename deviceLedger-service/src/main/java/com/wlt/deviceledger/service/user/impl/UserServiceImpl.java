@@ -16,6 +16,7 @@ import com.wlt.deviceledger.util.base.ResultData;
 import com.wlt.deviceledger.util.common.DateUtil;
 import com.wlt.deviceledger.util.common.JWTUtil;
 import com.wlt.deviceledger.util.common.MD5Util;
+import com.wlt.deviceledger.util.common.UuidUtil;
 import com.wlt.deviceledger.util.enums.CommonEnum;
 import com.wlt.deviceledger.util.exception.user.UserException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -263,9 +265,9 @@ public class UserServiceImpl implements IUserService{
 		//MD5加密方式
 		String algorithmName = ConstantUtils.MD5_TYPE;
 		//加盐
-		String encodedPassword = new SimpleHash(algorithmName, loginPwd, salt, times).toString();
+		String encodedPasusword = new SimpleHash(algorithmName, loginPwd, salt, times).toString();
 
-		userBean.setLoginPwd(encodedPassword);
+		userBean.setLoginPwd(encodedPasusword);
 		userBean.setSalt(salt);
 		userBean.setCreateTime(DateUtil.getCurrenDateTime());
 		userBean.setState(CommonEnum.RIGET.getCode());
@@ -365,14 +367,14 @@ public class UserServiceImpl implements IUserService{
 	}
 
 	@Override
-	public IPage<UserBean> getUserList(UserBean userBean) {
-		QueryWrapper<UserBean> queryWrapper = new QueryWrapper<>();
+	public IPage<Map<String, Object>> getUserList(UserBean userBean) {
+		QueryWrapper<Map<String, Object>> queryWrapper = new QueryWrapper<>();
 		UserBean selUserWhere = new UserBean();
 		selUserWhere.setIsDelete(0);
-		List<UserBean> userBeans = userDao.selectList(queryWrapper);
-		Page<UserBean> pageBean = new Page<>();
-		IPage<UserBean> userBeanIPage = userDao.selectPage(pageBean, queryWrapper);
-		return userBeanIPage;
+		List<Map<String, Object>> userBeans = userDao.selectUserList(userBean);
+		Page<Map<String, Object>> pageBean = new Page<>();
+		pageBean.setRecords(userBeans);
+		return pageBean;
 	}
 
 	@Override
@@ -389,6 +391,21 @@ public class UserServiceImpl implements IUserService{
 		
 		return userDao.manueAll();
 	}
+
+    @Override
+    public Boolean delUser(String id) {
+        UserBean userBean = new UserBean();
+        userBean.setId(id);
+        userBean.setIsDelete(1);
+        int i = userDao.updateById(userBean);
+        return i > 0 ? true : false;
+    }
+
+    @Override
+    public List<UserBean> allUser() {
+        List<UserBean> userList = userDao.findUserList();
+        return userList;
+    }
 
 
 }

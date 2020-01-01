@@ -62,5 +62,11 @@ public class UserBean {
 	@TableField(exist = false)
 	private String pageNum;
 
+
+    @TableField(exist = false)
+    private String deptName;
+
+    @TableField(exist = false)
+    private String roleName;
 }
  

@@ -89,6 +89,7 @@ public class UserController {
 
         Map<String, Object> resultMap = null;
 
+
         String token = request.getHeader("token");
 
         try {
@@ -98,7 +99,8 @@ public class UserController {
                 return ExceptionConstantsUtils.printErrorMessage(log, "token无效");
             }
 
-            RoleBean roleBean= userService.getRoleByRoleCode(tokenUserBean.getRoleId());
+//            RoleBean roleBean= userService.getRoleByRoleCode(tokenUserBean.getRoleId());
+            RoleBean roleBean = userService.getRoleByRoleCode(String.valueOf(tokenUserBean.getRoleId()));
             List<RoleBean> roleBeanList = new ArrayList<>();
             roleBeanList.add(roleBean);
 
@@ -115,7 +117,17 @@ public class UserController {
         return ExceptionConstantsUtils.printSuccessMessage(log, "登录成功", resultMap);
     }
 
-    
+
+    @RequestMapping("/detail")
+    @ResponseBody
+    public ResultData getInfo(@RequestBody UserBean userBean) {
+
+        UserBean whereUser = new UserBean();
+        whereUser.setId(userBean.getId());
+        UserBean returnUserBean = userService.getUser(whereUser);
+        return ExceptionConstantsUtils.printSuccessMessage(log, "获取用户信息", returnUserBean);
+    }
+
     /**
      * 注册用户
      * @param userBean
@@ -124,13 +136,13 @@ public class UserController {
     @SuppressWarnings("unchecked")
 	@PostMapping("/regis")
     @ResponseBody
-    public ResultData<Map<String, Object>> regis(UserBean userBean) {
+    public ResultData<Map<String, Object>> regis(@RequestBody UserBean userBean) {
 
 
         String loginAct = userBean.getLoginAct();
         String loginPwd = userBean.getLoginPwd();
         String email = userBean.getEmail();
-        String roleCode = userBean.getRoleId();
+        Integer roleCode = userBean.getRoleId();
         String deptCode = userBean.getDeptId();
 
         if(loginAct == null || loginAct.equals("")) {
@@ -212,7 +224,7 @@ public class UserController {
      */
     @RequestMapping(value="/updateUser",method=RequestMethod.POST)
     @ResponseBody
-    public ResultData<Object> updateUser(UserBean bean){
+    public ResultData<Object> updateUser(@RequestBody UserBean bean){
     	ResultData<Object> res = new ResultData<Object>();
     	try {
     		res = userService.updateUser(bean);
@@ -228,9 +240,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/list")
-    public ResultData<List<UserBean>> getUserList(HttpSession session, @RequestBody UserBean
+    @ResponseBody
+    public ResultData getUserList(HttpSession session, @RequestBody UserBean
                                                   userBean) {
-        IPage<UserBean> resultData = null;
+        IPage<Map<String, Object>> resultData = null;
         try {
             resultData = userService.getUserList(userBean);
         } catch (Exception e) {
@@ -240,7 +253,43 @@ public class UserController {
     }
 
 
+    @PostMapping("/del")
+    @ResponseBody
+    public ResultData delUser(@RequestBody UserBean userBean) {
 
+        ResultData resultData = null;
+
+        try {
+
+            userService.delUser(userBean.getId());
+
+        } catch (Exception e) {
+            return ExceptionConstantsUtils.printErrorMessage(log, e, "删除用户失败");
+        }
+
+
+        return ExceptionConstantsUtils.printSuccessMessage(log, "删除成功");
+    }
+
+
+
+    @PostMapping("/all")
+    @ResponseBody
+    public ResultData all(@RequestBody UserBean userBean) {
+
+        ResultData resultData = null;
+
+        try {
+
+            List<UserBean> list = userService.allUser();
+
+        } catch (Exception e) {
+            return ExceptionConstantsUtils.printErrorMessage(log, e, "删除用户失败");
+        }
+
+
+        return ExceptionConstantsUtils.printSuccessMessage(log, "删除成功");
+    }
 
 
 }

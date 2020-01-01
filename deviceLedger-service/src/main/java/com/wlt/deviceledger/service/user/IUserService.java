@@ -116,7 +116,7 @@ public interface IUserService {
 	 * @param userBean
 	 * @return
 	 */
-	IPage<UserBean> getUserList(UserBean userBean);
+	IPage<Map<String, Object>> getUserList(UserBean userBean);
 
 	/**
 	 * 通过用户id获取角色
@@ -137,5 +137,18 @@ public interface IUserService {
 	 * @return
 	 */
 	List<Permission> manueAll()throws Exception;
+
+	/**
+	 * 删除用户
+	 * @param id
+	 * @return
+	 */
+	Boolean delUser(String id);
+
+	/**
+	 * 查询所有用户
+	 * @return
+	 */
+	List<UserBean> allUser();
 }
  
