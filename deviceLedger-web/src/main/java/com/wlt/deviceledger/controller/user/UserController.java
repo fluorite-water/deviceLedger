@@ -98,8 +98,6 @@ public class UserController {
             if(tokenUserBean == null) {
                 return ExceptionConstantsUtils.printErrorMessage(log, "token无效");
             }
-
-//            RoleBean roleBean= userService.getRoleByRoleCode(tokenUserBean.getRoleId());
             RoleBean roleBean = userService.getRoleByRoleCode(String.valueOf(tokenUserBean.getRoleId()));
             List<RoleBean> roleBeanList = new ArrayList<>();
             roleBeanList.add(roleBean);
@@ -142,7 +140,7 @@ public class UserController {
         String loginAct = userBean.getLoginAct();
         String loginPwd = userBean.getLoginPwd();
         String email = userBean.getEmail();
-        Integer roleCode = userBean.getRoleId();
+        String roleCode = userBean.getRoleId()+"";
         String deptCode = userBean.getDeptId();
 
         if(loginAct == null || loginAct.equals("")) {

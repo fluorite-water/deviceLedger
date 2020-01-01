@@ -16,6 +16,7 @@ import com.wlt.deviceledger.bean.materialInfo.MaterialInfoBean;
 import com.wlt.deviceledger.bean.user.UserBean;
 import com.wlt.deviceledger.dao.materialInfo.IMaterialInfoDao;
 import com.wlt.deviceledger.service.materialInfo.IMaterialInfoService;
+import com.wlt.deviceledger.util.common.DateUtil;
 
 /** 
 * @Author 作者: Zhaoyongbing
@@ -60,8 +61,11 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 		int edit=0;
 		//添加
 		if(id == null) {
+			bean.setCreateTime(DateUtil.getCurrenDateTime());
+			bean.setIsDelete("1");
+			bean.setStatus("0");
 			edit = dao.insert(bean);
-		//修改
+		//修改--- 目前已废弃
 		} else {
 			edit = dao.updateById(bean);
 		}

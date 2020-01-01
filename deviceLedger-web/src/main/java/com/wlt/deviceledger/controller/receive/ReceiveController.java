@@ -39,7 +39,7 @@ public class ReceiveController {
 	 */
 	@RequestMapping(value = "/addReceive",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> addReceive(MaterReceiveBean bean,HttpSession session){
+	public ResultData<Object> addReceive(@RequestBody MaterReceiveBean bean,HttpSession session){
 		ResultData<Object> res = null;
 		try {
 			res = service.addReceive(bean,session);
@@ -60,8 +60,8 @@ public class ReceiveController {
 	 */
 	@RequestMapping(value = "/findReceiveList",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> findReceiveList(
-			@RequestParam(defaultValue="1")Integer pageNum,
+	public ResultData<Object> findReceiveList(@RequestBody
+			@RequestParam(defaultValue="1")Integer pageNum,@RequestBody 
 			@RequestParam(defaultValue="20")Integer pageSize,HttpSession session){
 		ResultData<Object> res = null;
 		try {
@@ -85,7 +85,7 @@ public class ReceiveController {
 	 */
 	@RequestMapping(value = "/receiveApprove",method=RequestMethod.POST)
 	@ResponseBody
-	public ResultData<Object> receiveApprove(ApproveReceiveRecordBean bean,HttpSession session){
+	public ResultData<Object> receiveApprove(@RequestBody ApproveReceiveRecordBean bean,HttpSession session){
 		ResultData<Object> res = null;
 		try {
 			
