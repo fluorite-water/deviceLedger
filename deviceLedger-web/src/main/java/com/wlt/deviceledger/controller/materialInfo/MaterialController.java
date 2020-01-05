@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -41,15 +42,15 @@ public class MaterialController {
 	 * @param bean
 	 * @return
 	 */
-	@RequestMapping(value = "/findList",method=RequestMethod.GET)
+	@RequestMapping(value = "/findList",method=RequestMethod.POST)
 	@ResponseBody
-	public  ResultData<PageInfo<MaterialInfoBean>> findList(MaterialInfoBean bean,
-			@RequestParam(defaultValue="1")Integer pageNum,
-			@RequestParam(defaultValue="20")Integer pageSize) {
-		
+	public  ResultData<PageInfo<MaterialInfoBean>> findList(@RequestBody MaterialInfoBean bean) {
+
 			ResultData<PageInfo<MaterialInfoBean>> result = new ResultData<PageInfo<MaterialInfoBean>>();
+
 			List<MaterialInfoBean> list = service.findList(bean);
 			PageInfo<MaterialInfoBean> info = new PageInfo<MaterialInfoBean>(list);
+
 			result.setCode(ConstantUtils.SUCCESS_CODE);
 			result.setMsg("查询成功");
 			result.setSuccess(ConstantUtils.SUCCESS_MESSAGE);

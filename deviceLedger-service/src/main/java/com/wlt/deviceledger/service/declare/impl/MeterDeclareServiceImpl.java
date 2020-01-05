@@ -41,12 +41,8 @@ public class MeterDeclareServiceImpl implements IMeterDeclareService{
 	@Override
 	public ResultData<Object> addDeclare(MaterDeclareBean bean,HttpSession session) throws Exception {
 		ResultData<Object> res = new ResultData<Object>();
-		Object user =  session.getAttribute("user");
-		UserBean userBean = new UserBean();
-		if(user != null) {
-			userBean = (UserBean) user;
-		}
-		bean.setUserId(Integer.valueOf(userBean.getId()));
+		UserBean user =   (UserBean)session.getAttribute("user");
+		bean.setUserId(Integer.valueOf(user.getId()));
 		bean.setApprovalState(ConstantUtils.APPROVAL_STATE0);
 //		bean.setApprovalUserId(Integer.parseInt(userBean.getId()));
 		bean.setCreateTime(DateUtil.getCurrenDateTime());

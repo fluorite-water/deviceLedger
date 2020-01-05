@@ -273,20 +273,22 @@ public class UserController {
 
     @PostMapping("/all")
     @ResponseBody
-    public ResultData all(@RequestBody UserBean userBean) {
+    public ResultData all() {
 
         ResultData resultData = null;
 
+        List<UserBean> list = null;
+
         try {
 
-            List<UserBean> list = userService.allUser();
+            list = userService.allUser();
 
         } catch (Exception e) {
             return ExceptionConstantsUtils.printErrorMessage(log, e, "删除用户失败");
         }
 
 
-        return ExceptionConstantsUtils.printSuccessMessage(log, "删除成功");
+        return ExceptionConstantsUtils.printSuccessMessage(log, "删除成功", list);
     }
 
 

@@ -36,7 +36,7 @@ public class MaterialInfoServiceImpl implements IMaterialInfoService{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MaterialInfoBean> findList(MaterialInfoBean bean) {
-		PageHelper.startPage(1, 3);
+		PageHelper.startPage(bean.getPageNum(), bean.getPageSize());
 		//分页 查询总数 不返回大于页码的数据
 //		PageHelper.startPage(page,pageSize ,true,false);
 		//分页 查询总数 如果页码大于最大页，返回最后一页数据

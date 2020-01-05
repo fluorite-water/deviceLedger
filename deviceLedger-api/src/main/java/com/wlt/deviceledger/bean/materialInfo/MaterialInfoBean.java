@@ -3,10 +3,13 @@ package com.wlt.deviceledger.bean.materialInfo;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 @TableName(value = "tbl_material_info")  // 指定表名
+@Data
 public class MaterialInfoBean implements Serializable {
     /**
      * 主键
@@ -99,6 +102,11 @@ public class MaterialInfoBean implements Serializable {
      */
     private Integer userId;
 
+    @TableField(exist = false)
+    private Integer pageSize;
+
+    @TableField(exist = false)
+    private Integer pageNum;
     /**
      * tbl_material_info
      */
