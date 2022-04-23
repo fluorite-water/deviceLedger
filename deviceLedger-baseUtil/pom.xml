@@ -10,7 +10,7 @@
   <name>deviceLedger-baseUtil</name>
   <description>deviceLedger-baseUtil</description>
    <properties>
-        <spring.version>4.3.12.RELEASE</spring.version>
+        <spring.version>5.3.19</spring.version>
         <servlet.version>3.1.0</servlet.version>
         <commons-codec>1.10</commons-codec>
         <mybatis.version>3.4.4</mybatis.version>
