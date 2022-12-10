@@ -10,7 +10,7 @@
   <name>deviceLedger-baseUtil</name>
   <description>deviceLedger-baseUtil</description>
    <properties>
-        <spring.version>4.3.12.RELEASE</spring.version>
+        <spring.version>6.0.0</spring.version>
         <servlet.version>3.1.0</servlet.version>
         <commons-codec>1.10</commons-codec>
         <mybatis.version>3.4.4</mybatis.version>
@@ -33,7 +33,7 @@
     <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
-        <version>4.3.12.RELEASE</version>
+        <version>6.0.0</version>
     </dependency>
     <dependency>
             <groupId>javax.servlet</groupId>
